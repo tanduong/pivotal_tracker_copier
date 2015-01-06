@@ -1,11 +1,17 @@
 function renderOne(story) {
-  return "<li> " + humanize(story.status) + " - " + "<a href='" + story.link + "'>" + story.story_name + "</a>" + "</li>";
+  return "<li> " + statusString(story.status) + "<a href='" + story.link + "'>" + story.story_name + "</a>" + "</li>";
 };
 
 function humanize(string) {
   return string.replace(/(\w+)/g, function(match) {
     return match.charAt(0).toUpperCase() + match.slice(1);
   });
+}
+
+function statusString(status) {
+  status = status == 'started' ? 'WIP' : status;
+  status = status == 'unstarted' ? '' : status;
+  return status ? humanize(status) + ' - ' : '';
 }
 
 function selectText(containerid) {

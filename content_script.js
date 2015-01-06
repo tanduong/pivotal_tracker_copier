@@ -4,7 +4,7 @@ var getSelectedStories = function() {
     var story = $(selector).closest(".story");
     var id = story.attr("class").match(/story_(\d+)/)[1];
     var link = "https://www.pivotaltracker.com/story/show/" + id;
-    var status = story.attr("class").match(/delivered|finished|started/)[0];
+    var status = (story.attr("class").match(/delivered|finished|started|unstarted/)||[])[0];
     var storyName = story.find("span.story_name").text();
     return {
       id: id,

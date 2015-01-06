@@ -2,19 +2,19 @@
   "name": "PivotalTracker",
   "version": "1.0",
   "description": "Copy",
-  "background": {
-    "scripts": [
+  "background" : {
+    "scripts"  : [
       "background.js"
     ]
   },
   "content_scripts": [
     {
       "matches": ["https://www.pivotaltracker.com/n/projects/*"],
-      "js": ["jquery.js"]
+      "js"     : ["jquery.js"]
     }
   ],
   "page_action": {
-    "default_icon": "icon-19.png",
+    "default_icon" : "pivotaltracker.png",
     "default_title": "To be awesome!",
     "default_popup": "popup.html"
   },
@@ -24,8 +24,8 @@
     "tabs"
   ],
   "icons": {
-    "48": "icon-48.png",
-    "128": "icon-128.png"
+    "48" : "pivotaltracker.png",
+    "128": "pivotaltracker.png"
   },
   "manifest_version": 2
 }
