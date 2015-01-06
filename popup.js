@@ -30,21 +30,23 @@ $(document).ready(function() {
   // var templateSingle = "<li> <%= status %> - <a href='<%= link %>'> <%= story_name %></li>";
   // var compiled = _.template(templateSingle);
   chrome.extension.onMessage.addListener(function(request, sender) {
-    if (request.msg == "stories" && request.stories.length > 0) {
-      var html = '';
+    if (request.msg != "stories") { return; }
 
+    var html = '';
+
+    if(request.stories.length > 0) {
       _.each(request.stories, function(story) {
         html += renderOne(story);
       });
-
-      html = html == '' ? html : "Please select some stories."
-
-      html = '<ul>' + html + '</ul>';
-
-      $('body').html(html);
-
-      selectText('body');
+    } else {
+      html = "Please select some stories."
     }
+
+    html = '<ul>' + html + '</ul>';
+
+    $('body').html(html);
+
+    selectText('body');
   });
   chrome.tabs.executeScript(null, {file: "content_script.js"});
 });
