@@ -1,5 +1,5 @@
 {
-  "name": "PivotalTracker",
+  "name": "Pivotal Tracker Story Copier",
   "version": "1.0",
   "description": "Copy",
   "background" : {
@@ -15,7 +15,7 @@
   ],
   "page_action": {
     "default_icon" : "pivotaltracker.png",
-    "default_title": "To be awesome!",
+    "default_title": "View stories",
     "default_popup": "popup.html"
   },
   "permissions": [
