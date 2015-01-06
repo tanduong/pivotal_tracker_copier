@@ -34,9 +34,10 @@ $(document).ready(function() {
       var html = '';
 
       _.each(request.stories, function(story) {
-        console.log(story);
         html += renderOne(story);
       });
+
+      html = html == '' ? html : "Please select some stories."
 
       html = '<ul>' + html + '</ul>';
 
