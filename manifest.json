@@ -1,6 +1,6 @@
 {
   "name": "Pivotal Tracker Story Copier",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "description": "Copy",
   "background" : {
     "scripts"  : [
@@ -10,7 +10,7 @@
   "content_scripts": [
     {
       "matches": ["https://www.pivotaltracker.com/n/projects/*"],
-      "js"     : ["bower_components/jquery/dist/jquery.js"]
+      "js"     : ["bower_components/jquery/dist/jquery.min.js"]
     }
   ],
   "page_action": {

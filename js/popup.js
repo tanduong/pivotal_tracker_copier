@@ -82,7 +82,12 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
   this.emailBCC   = localStorage["pr#emailBCC"] || "developers@eastagile.com";
   this.subject    = '[' + this.projectName + ']' + " Daily Report " + todayString();
 
-  this.lastUpdateBillCount = isNaN(Date.parse(window.localStorage["lastUpdateBillCount"])) ? null : new Date();
+  try {
+    this.lastUpdateBillCount = new Date(Date.parse(window.localStorage["lastUpdateBillCount"]));
+  } catch(exp) {
+    this.lastUpdateBillCount = null;
+  }
+
   this.oldWeekBills  = +window.localStorage["weekBills"]  || 0;
   this.oldMonthBills = +window.localStorage["monthBills"] || 0;
 
@@ -112,7 +117,12 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
     this.todayBills = this.computeBills(members);
   }.bind(this));
 
-  this.members = JSON.parse(localStorage["pr#members"]) || [];
+  try {
+    this.members = JSON.parse(localStorage["pr#members"]);
+  }
+  catch(err) {
+    this.members = [];
+  };
 
   var copy = function(elId) {
     selectText(elId);
