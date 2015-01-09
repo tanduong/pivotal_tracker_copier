@@ -1,4 +1,34 @@
-var prModule = angular.module('myModule', ['ui.bootstrap']);
+var prModule = angular.module('myModule', ['ui.bootstrap'], ['$compileProvider', function($compileProvider) {
+  $compileProvider.directive('compile', function($compile) {
+    return function(scope, element, attrs) {
+      scope.$watch(
+        function(scope) {
+          return scope.$eval(attrs.compile);
+        },
+        function(value) {
+          element.html(value);
+          $compile(element.contents())(scope);
+        }
+      );
+    };
+  });
+}]);
+
+prModule.directive('elastic', [
+  '$timeout',
+  function($timeout) {
+    return {
+      restrict: 'A',
+      link: function($scope, element) {
+        var resize = function() {
+          return element[0].style.height = "" + element[0].scrollHeight + "px";
+        };
+        element.on("blur keyup change", resize);
+        $timeout(resize, 0);
+      }
+    };
+  }
+]);
 
 function selectText(containerid) {
   if (document.selection) {
@@ -27,9 +57,13 @@ function todayString() {
   return formatDate(new Date());
 }
 
+
+
 prModule.controller('prController', function($scope, $compile) {
+  this.template = localStorage["pr#template"] || template;
+
   this.$scope = $scope;
-  this.domainName = "stanyangroup.com";
+  this.domainName = localStorage["pr#domainName"] || "stanyangroup.com";
   this.subjectPrefix = window.localStorage["subjectPrefix"];
 
 
@@ -73,7 +107,6 @@ prModule.controller('prController', function($scope, $compile) {
   this.members = [];
 
   $scope.$watchCollection('prCtrl.members', function(members){
-    debugger;
     this.todayBills = this.computeBills(members);
   }.bind(this));
 
@@ -109,6 +142,7 @@ prModule.controller('prController', function($scope, $compile) {
     localStorage["pr#emailTo"]    = this.emailTo;
     localStorage["pr#emailCC"]    = this.emailCC;
     localStorage["pr#emailBCC"]   = this.emailBCC;
+    localStorage["pr#template"]   = this.template;
     if((new Date()) - this.lastUpdateBillCount > 12 * 60 * 60 * 1000) {
       localStorage["pr#lastUpdateBillCount"] = (new Date()).toUTCString();
       this.oldWeekBills  = window.localStorage["weekBills"]  = this.weekBills;
@@ -133,7 +167,8 @@ prModule.controller('prController', function($scope, $compile) {
       email : this.newUserName + '@' + this.currentEmailDomain,
       bill  : 1
     });
-
+    localStorage["pr#currentEmailDomain"]   = this.currentEmailDomain;
+    currentEmailDomain
     this.newUserName = "";
     $('#new-user-name').focus();
   }
@@ -173,3 +208,92 @@ function makeGmailWin(options) {
                  "&bcc="  + encodeURIComponent(options.bcc);
   chrome.tabs.create({url: gmailURL });
 }
+
+function hereDoc(f) {
+  return f.toString().
+      replace(/^[^\/]+\/\*!?/, '').
+      replace(/\*\/[^\/]+$/, '');
+}
+
+var template = hereDoc(function() {/*!
+<header>Hi {{prCtrl.recipients || "everyone"}},</header>
+<br/>
+
+<article>
+  <header> What has the team done since the last call/email regarding this project? </header>
+  <section>
+    <ul>
+      <li ng-repeat='work in prCtrl.works'>
+        {{work.status}} -
+        <a href="{{work.url}}" target="_blank">{{work.name}}</a>
+      </li>
+    </ul>
+  </section>
+</article>
+
+<article>
+  <header> What will the team do between now and next call/email regarding this project? </header>
+  <section>
+    <ul>
+      <li ng-repeat='todo in prCtrl.todos'>
+        <a href="{{todo.url}}" target="_blank">{{todo.name}}</a>
+      </li>
+    </ul>
+  </section>
+</article>
+
+<article>
+  <header> What impedes the team from performing their work as effectively as possible? </header>
+  <section>
+    <ul>
+      <li> Anythings? </li>
+    </ul>
+  </section>
+</article>
+
+<article>
+  <header> How much time have we spent today? </header>
+  <section>
+    <ul>
+      <li> <span ng-bind="prCtrl.todayBills"></span> days </li>
+    </ul>
+  </section>
+</article>
+
+<article>
+  <header> How much time have we spent this week? </header>
+  <section>
+    <ul>
+      <li> <span ng-bind="prCtrl.weekBills"></span> days </li>
+    </ul>
+  </section>
+</article>
+
+<article>
+  <header> How much time have we spent this month? </header>
+  <section>
+    <ul>
+      <li> <span ng-bind="prCtrl.monthBills"></span> days </li>
+    </ul>
+  </section>
+</article>
+
+<article>
+  <header> Our team today: </header>
+  <section>
+    <ul>
+      <li ng-repeat='member in prCtrl.members'>
+        {{member.name}}
+        <a href="mailto:{{member.email}}?Subject={{encodeURIComponent('Re:' + prCtrl.subject)}}" target="_top">
+          ({{member.email}})
+        </a>
+        ({{member.bill}} billable day)
+      </li>
+    </ul>
+  </section>
+</article>
+
+<p>Best regards,</p>
+
+<p>{{prCtrl.teamName}}</p>
+*/});

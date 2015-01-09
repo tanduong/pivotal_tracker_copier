@@ -36,88 +36,8 @@
           Email
         </tab-heading>
         <section id="email-container">
-          <header>Hi {{prCtrl.recipients || "everyone"}},</header>
-          <br/>
-
-          <article>
-            <header> What has the team done since the last call/email regarding this project? </header>
-            <section>
-              <ul>
-                <li ng-repeat='work in prCtrl.works'>
-                  {{work.status}} -
-                  <a href="{{work.url}}" target="_blank">{{work.name}}</a>
-                </li>
-              </ul>
-            </section>
-          </article>
-
-          <article>
-            <header> What will the team do between now and next call/email regarding this project? </header>
-            <section>
-              <ul>
-                <li ng-repeat='todo in prCtrl.todos'>
-                  <a href="{{todo.url}}" target="_blank">{{todo.name}}</a>
-                </li>
-              </ul>
-            </section>
-          </article>
-
-          <article>
-            <header> What impedes the team from performing their work as effectively as possible? </header>
-            <section>
-              <ul>
-                <li> Anythings? </li>
-              </ul>
-            </section>
-          </article>
-
-          <article>
-            <header> How much time have we spent today? </header>
-            <section>
-              <ul>
-                <li> <span ng-bind="prCtrl.todayBills"></span> days </li>
-              </ul>
-            </section>
-          </article>
-
-          <article>
-            <header> How much time have we spent this week? </header>
-            <section>
-              <ul>
-                <li> <span ng-bind="prCtrl.weekBills"></span> days </li>
-              </ul>
-            </section>
-          </article>
-
-          <article>
-            <header> How much time have we spent this month? </header>
-            <section>
-              <ul>
-                <li> <span ng-bind="prCtrl.monthBills"></span> days </li>
-              </ul>
-            </section>
-          </article>
-
-          <article>
-            <header> Our team today: </header>
-            <section>
-              <ul>
-                <li ng-repeat='member in prCtrl.members'>
-                  {{member.name}}
-                  <a href="mailto:{{member.email}}?Subject={{encodeURIComponent('Re:' + prCtrl.subject)}}" target="_top">
-                    ({{member.email}})
-                  </a>
-                  ({{member.bill}} billable day)
-                </li>
-              </ul>
-            </section>
-          </article>
-
-          <p>Best regards,</p>
-
-          <p>{{prCtrl.teamName}}</p>
+          <div compile="prCtrl.template"></div>
         </section>
-
         <section>
           <button class="btn btn-default" ng-click="prCtrl.copy('email-container')">Copy</button>
           <button class="btn btn-primary" ng-click="prCtrl.copyCompose('email-container')">Copy & Compose</button>
@@ -146,25 +66,26 @@
           </div>
 
           <div class="form-group">
-            <label class="control-label" for="teamName">Team name</label>
-            <input type="text" class="form-control" id="teamName" ng-model="prCtrl.teamName">
-          </div>
-
-          <div class="form-group">
             <label class="control-label" for="domainName">Domain name</label>
             <input type="text" class="form-control" id="domainName" ng-model="prCtrl.domainName">
           </div>
-
-          <div class="form-group">
-            <label class="control-label" for="projectName">Project Name</label>
-            <input type="text" class="form-control" id="projectName" ng-model="prCtrl.projectName">
-          </div>
-
-          <div class="form-group">
-            <label class="control-label" for="recipients">Recipients name</label>
-            <input type="text" class="form-control" id="recipients" ng-model="prCtrl.recipients">
-          </div>
         </form>
+      </tab>
+
+      <tab>
+        <tab-heading>
+          Project
+        </tab-heading>
+        <header>Project Info</header>
+        <div class="form-group">
+          <label class="control-label" for="projectName">Project Name</label>
+          <input type="text" class="form-control" id="projectName" ng-model="prCtrl.projectName">
+        </div>
+
+        <div class="form-group">
+          <label class="control-label" for="recipients">Recipients name</label>
+          <input type="text" class="form-control" id="recipients" ng-model="prCtrl.recipients">
+        </div>
       </tab>
 
       <tab>
@@ -187,33 +108,49 @@
 
       <tab>
         <tab-heading>
-          Team members
+          Team
         </tab-heading>
 
         <section>
-          <header>{{prCtrl.projectName}} members</header>
-          <ul>
-            <li ng-repeat='member in prCtrl.members'> <span>
-              {{member.name}} ({{member.email}}) ({{member.bill}} billable day)
-            </span>
-            <a href="#" ng-click="prCtrl.deleteMember(member)">remove</a>
-            </li>
-          </ul>
+          <article>
+            <header>Team Name</header>
+            <section class="form-group">
+              <input type="text" class="form-control" id="teamName" ng-model="prCtrl.teamName">
+            </section>
+          </article>
 
-          <form class="form" ng-submit="prCtrl.addMember()">
-            <div class="form-group">
-              <label class="control-label">New member</label>
-              <div class="input-group">
-                <input type="text" class="form-control" placeholder="Username" ng-model="prCtrl.newUserName" id="new-user-name">
-                <span class="input-group-addon" id="sizing-addon2">@</span>
-                <input type="text" class="form-control" placeholder="Domain" ng-model="prCtrl.currentEmailDomain">
-                <span class="input-group-btn">
-                  <button class="btn btn-primary" type="submit">Add</button>
-                </span>
+          <article>
+            <header>Team Members</header>
+            <ul>
+              <li ng-repeat='member in prCtrl.members'> <span>
+                {{member.name}} ({{member.email}}) ({{member.bill}} billable day)
+              </span>
+              <a href="#" ng-click="prCtrl.deleteMember(member)">remove</a>
+              </li>
+            </ul>
+
+            <form class="form" ng-submit="prCtrl.addMember()">
+              <div class="form-group">
+                <label class="control-label">New member</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" placeholder="Username" ng-model="prCtrl.newUserName" id="new-user-name">
+                  <span class="input-group-addon" id="sizing-addon2">@</span>
+                  <input type="text" class="form-control" placeholder="Domain" ng-model="prCtrl.currentEmailDomain">
+                  <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">Add</button>
+                  </span>
+                </div>
               </div>
-            </div>
-          </form>
+            </form>
+          </article>
         </section>
+      </tab>
+
+      <tab>
+        <tab-heading>
+          Template
+        </tab-heading>
+        <textarea elastic class="template" ng-model="prCtrl.template"></textarea> <br>
       </tab>
     </tabset>
 

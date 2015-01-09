@@ -1,5 +1,5 @@
 body {
-  width: 800px;
+  width: 768px;
   overflow-x: scroll;
   padding: 10px;
 }
@@ -14,4 +14,9 @@ li.commit-message {
 
 div.tab-content {
   padding-top: 15px;
+}
+
+textarea.template {
+  width: 100%;
+  height:800px;
 }
