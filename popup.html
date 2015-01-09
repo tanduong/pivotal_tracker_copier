@@ -2,8 +2,8 @@
 <html ng-app='myModule' ng-csp>
   <head>
     <title>Pivotal Tracker Email Reporter</title>
-    <link rel="stylesheet" href="bootstrap.min.css"/>
-    <link rel="stylesheet" href="main.css"/>
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/main.css"/>
     <script src="bower_components/jquery/dist/jquery.js"></script>
     <script src="bower_components/lodash/dist/lodash.js"></script>
     <script src="bower_components/angular/angular.js"></script>
@@ -32,7 +32,7 @@
         </section>
         <hr>
         <section>
-          <button class="btn btn-primary pull-right" ng-click="prCtrl.copy('commit-messages')">Copy</button>
+          <button class="btn btn-success pull-right" ng-click="prCtrl.copy('commit-messages')">Copy</button>
         </section>
       </tab>
 
@@ -45,8 +45,8 @@
         </section>
         <hr>
         <section>
-          <button class="btn btn-primary pull-right" ng-click="prCtrl.copyCompose('email-container')">Copy & Compose</button>
-          <button class="btn btn-default pull-right" ng-click="prCtrl.copy('email-container')">Copy</button>
+          <button class="btn btn-success pull-right" ng-click="prCtrl.copyCompose('email-container')">Copy & Compose</button>
+          <button class="btn btn-warning pull-right" ng-click="prCtrl.copy('email-container')">Copy</button>
         </section>
       </tab>
 
@@ -101,17 +101,33 @@
 
       <tab>
         <tab-heading>
-          Billables
+          Bills
         </tab-heading>
-        <header>Setting billable info</header>
+        <header>Setting Bill Count</header>
+
+        <div class="form-group">
+          <label class="control-label" for="disabledInput">Old Week Bill Count</label>
+          <input class="form-control" id="disabledInput" type="text" placeholder="{{prCtrl.oldWeekBills}}" disabled="">
+        </div>
+
+        <div class="form-group">
+          <label class="control-label" for="disabledInput">Old Month Bill Count</label>
+          <input class="form-control" id="disabledInput" type="text" placeholder="{{prCtrl.oldMonthBills}}" disabled="">
+        </div>
+
+        <div class="form-group">
+          <label class="control-label" for="disabledInput">Recorded at</label>
+          <input class="form-control" id="disabledInput" type="date" ng-model="prCtrl.lastUpdateBillCount" disabled="">
+        </div>
+
         <form class="form">
           <div class="form-group">
-            <label class="control-label" for="week-bills">Week bills</label>
+            <label class="control-label" for="week-bills">Week bills now</label>
             <input type="text" class="form-control" id="week-bills" ng-model="prCtrl.weekBills">
           </div>
 
           <div class="form-group">
-            <label class="control-label" for="month-bills">Month bills</label>
+            <label class="control-label" for="month-bills">Month bills now</label>
             <input type="text" class="form-control" id="month-bills" ng-model="prCtrl.monthBills">
           </div>
         </form>
@@ -133,10 +149,10 @@
             <input type="text" class="form-control" id="teamName" ng-model="prCtrl.teamName">
           </section>
 
-          <section class="form-group">
+          <!-- <section class="form-group">
             <label class="control-label" for="domainName">Domain name</label>
             <input type="text" class="form-control" id="domainName" ng-model="prCtrl.domainName">
-          </section>
+          </section> -->
 
           <article>
             <header>Team Members</header>

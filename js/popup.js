@@ -68,8 +68,6 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
 
   this.$scope = $scope;
   this.domainName = localStorage["pr#domainName"] || "stanyangroup.com";
-  this.subjectPrefix = window.localStorage["subjectPrefix"];
-
 
   this.works = [];
 
@@ -80,13 +78,13 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
   this.recipients = localStorage["pr#recipients"];
   this.projectName= localStorage["pr#projectName"];
   this.emailTo    = localStorage["pr#emailTo"];
-  this.emailCC    = localStorage["pr#emailCC"];
-  this.emailBCC   = localStorage["pr#emailBCC"];
+  this.emailCC    = localStorage["pr#emailCC"]  || "quang.huynh@eastagile.com, admin@eastagile.com";
+  this.emailBCC   = localStorage["pr#emailBCC"] || "developers@eastagile.com";
   this.subject    = '[' + this.projectName + ']' + " Daily Report " + todayString();
 
-  this.lastUpdateBillCount = new Date(Date.parse(window.localStorage["lastUpdateBillCount"]));
-  this.oldWeekBills  = window.localStorage["weekBills"]  || 0;
-  this.oldMonthBills = window.localStorage["monthBills"] || 0;
+  this.lastUpdateBillCount = isNaN(Date.parse(window.localStorage["lastUpdateBillCount"])) ? null : new Date();
+  this.oldWeekBills  = +window.localStorage["weekBills"]  || 0;
+  this.oldMonthBills = +window.localStorage["monthBills"] || 0;
 
   this.computeBills = function(members) {
     return members.map(function(member) { return member.bill; }).reduce(function(state, val) { return state + val; }, 0);
@@ -124,20 +122,6 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
 
   this.copy = copy;
 
-  this.copyCompose = function(elId) {
-    var options = {
-      subject   : this.subject,
-      to        : this.emailTo,
-      cc        : this.emailCC,
-      bcc       : this.emailBCC,
-      body      : "Paste here",
-      domainName: this.domainName
-    };
-    copy(elId);
-    this.commitEmail();
-    makeGmailWin(options);
-  }.bind(this);
-
   this.saveTemplate = function(){
     localStorage["pr#template"]   = this.template;
   };
@@ -145,12 +129,14 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
   this.saveTeam = function() {
     localStorage["pr#teamName"]   = this.teamName;
     localStorage["pr#members"]    = JSON.stringify(this.members);
-    localStorage["pr#domainName"] = this.domainName;
+    // localStorage["pr#domainName"] = this.domainName;
   };
 
   this.saveBillables = function() {
-      this.oldMonthBills = window.localStorage["monthBills"] = this.monthBills;
-      this.oldWeekBills  = window.localStorage["weekBills"]  = this.weekBills;
+      this.lastUpdateBillCount = new Date();
+      localStorage["pr#lastUpdateBillCount"] = this.lastUpdateBillCount.toUTCString();
+      window.localStorage["monthBills"] = this.oldMonthBills = this.monthBills;
+      window.localStorage["weekBills"]  = this.oldWeekBills  = this.weekBills;
   };
 
   this.saveProject = function() {
@@ -164,15 +150,34 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
     localStorage["pr#emailBCC"]   = this.emailBCC;
   };
 
+  this.expiredBillCount = function() {
+    if(this.oldMonthBills + this.todayBills != this.monthBills) return true;
+    if(this.oldWeekBills + this.todayBills != this.weekBills)   return true;
+    return this.lastUpdateBillCount &&(new Date()) - this.lastUpdateBillCount > 12 * 60 * 60 * 1000;
+  }
+
   this.commitEmail = function(){
     this.saveProject();
     this.saveTeam();
     this.saveMailTo();
     this.saveTemplate();
-    if((new Date()) - this.lastUpdateBillCount > 12 * 60 * 60 * 1000) {
-      localStorage["pr#lastUpdateBillCount"] = (new Date()).toUTCString();
+    if(this.expiredBillCount()){
       this.saveBillables();
     }
+  }.bind(this);
+
+  this.copyCompose = function(elId) {
+    var options = {
+      subject   : this.subject,
+      to        : this.emailTo,
+      cc        : this.emailCC,
+      bcc       : this.emailBCC,
+      body      : "Paste here",
+      domainName: this.domainName
+    };
+    copy(elId);
+    this.commitEmail();
+    makeGmailWin(options);
   }.bind(this);
 
   this.safeApply = function(fn) {

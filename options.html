@@ -1,49 +1,29 @@
 <!DOCTYPE>
-<!-- Copyright 2009 Google Inc.  All Rights Reserved. -->
 <html>
 <head>
-  <title>Options for Send from Gmail</title>
+  <title>Options for Pivotal Tracker Email Reporter</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css"/>
   <script src="js/options.js"></script>
-<style>
-  .input_option {
-    font-family: Helvetica, Arial, sans-serif;
-    font-size: 10pt;
-  }
-</style>
 </head>
-<body>
-<br />
-<table>
-<tr><td width="20%">
-<img src="icon.png" width="64" height="64" />
-</td>
-<td>
-<h3>Options for Send Email</h3>
-</td>
-</tr>
-</table>
-<br />
-  <form>
-  <div id="apps_for_domain_option" class="input_option">
-    <strong>Enter the domain name of your <a href="http://www.google.com/apps/">
-    Google Apps for your domain</a> account:</strong>
-    <br />
-    (Enter just the base domain your_domain.com instead of www.your_domain.com.<br />
-     For Gmail, leave the field empty.)
-    <br />
-    <input id="domain_info" type="text" name="domain_info" value="" style="width:400px">
+<body class="container">
+  <div class="jumbotron">
+    <h1>Options for Send Email</h1>
+    <p>
+      <strong>Enter the domain name of your <a href="http://www.google.com/apps/"> Google Apps for your domain</a> account:</strong><br/>
+      Enter just the base domain your_domain.com instead of www.your_domain.com. <br/>
+      For Gmail, leave the field empty. <br />
+    </p>
+    <form class="form">
+      <fieldset>
+        <div class="form-group">
+          <label for="inputEmail" class="control-label">Email</label>
+          <input type="text" name="domain_info" class="form-control" id="domain_info" placeholder="Email">
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary pull-right">Save</button>
+        </div>
+      </fieldset>
+    </form>
   </div>
-  <br />
-  <div id="subject_prefix_option" class="input_option">
-    <strong>Enter a prefix for the subject field when sending from Gmail:</strong>
-    <br />
-    (If the title of the current page is "Nobel prize winners", and your chosen <br />
-     prefix is "Interesting link", the mail will have the subject<br />
-     "Interesting link - Nobel prize winners")<br />
-    <input id="subject_prefix" type="text" name="subject_prefix" value="" style="width:400px">
-  </div>
-  <br />
-  <input type="submit" value="Save" />
-  </form>
 </body>
 </html>
