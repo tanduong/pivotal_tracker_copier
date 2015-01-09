@@ -1,4 +1,4 @@
-var prModule = angular.module('myModule', ['ui.bootstrap', 'monospaced.elastic'], ['$compileProvider', function($compileProvider) {
+var prModule = angular.module('myModule', ['ui.bootstrap', 'ui.ace'], ['$compileProvider', function($compileProvider) {
   $compileProvider.directive('compile', function($compile) {
     return function(scope, element, attrs) {
       scope.$watch(
@@ -59,8 +59,12 @@ function todayString() {
 
 
 
-prModule.controller('prController', function($scope, $compile) {
+prModule.controller('prController', function($scope, $compile, $timeout) {
   this.template = localStorage["pr#template"] || template;
+  this.editorOptions = {
+      mode: 'ejs',
+      theme: 'chrome'
+  };
 
   this.$scope = $scope;
   this.domainName = localStorage["pr#domainName"] || "stanyangroup.com";
@@ -120,7 +124,7 @@ prModule.controller('prController', function($scope, $compile) {
 
   this.copy = copy;
 
-  this.copyCompose = function() {
+  this.copyCompose = function(elId) {
     var options = {
       subject   : this.subject,
       to        : this.emailTo,
@@ -129,26 +133,47 @@ prModule.controller('prController', function($scope, $compile) {
       body      : "Paste here",
       domainName: this.domainName
     };
-    copy();
+    copy(elId);
+    this.commitEmail();
     makeGmailWin(options);
-  }
+  }.bind(this);
 
-  this.commitEmail = function(){
-    localStorage["pr#members"]    = JSON.stringify(this.members);
+  this.saveTemplate = function(){
+    localStorage["pr#template"]   = this.template;
+  };
+
+  this.saveTeam = function() {
     localStorage["pr#teamName"]   = this.teamName;
+    localStorage["pr#members"]    = JSON.stringify(this.members);
     localStorage["pr#domainName"] = this.domainName;
-    localStorage["pr#recipients"] = this.recipients;
+  };
+
+  this.saveBillables = function() {
+      this.oldMonthBills = window.localStorage["monthBills"] = this.monthBills;
+      this.oldWeekBills  = window.localStorage["weekBills"]  = this.weekBills;
+  };
+
+  this.saveProject = function() {
     localStorage["pr#projectName"]= this.projectName;
+    localStorage["pr#recipients"] = this.recipients;
+  };
+
+  this.saveMailTo = function() {
     localStorage["pr#emailTo"]    = this.emailTo;
     localStorage["pr#emailCC"]    = this.emailCC;
     localStorage["pr#emailBCC"]   = this.emailBCC;
-    localStorage["pr#template"]   = this.template;
+  };
+
+  this.commitEmail = function(){
+    this.saveProject();
+    this.saveTeam();
+    this.saveMailTo();
+    this.saveTemplate();
     if((new Date()) - this.lastUpdateBillCount > 12 * 60 * 60 * 1000) {
       localStorage["pr#lastUpdateBillCount"] = (new Date()).toUTCString();
-      this.oldWeekBills  = window.localStorage["weekBills"]  = this.weekBills;
-      this.oldMonthBills = window.localStorage["monthBills"] = this.monthBills;
+      this.saveBillables();
     }
-  };
+  }.bind(this);
 
   this.safeApply = function(fn) {
     var phase = this.$scope.$root.$$phase;
@@ -168,7 +193,6 @@ prModule.controller('prController', function($scope, $compile) {
       bill  : 1
     });
     localStorage["pr#currentEmailDomain"]   = this.currentEmailDomain;
-    currentEmailDomain
     this.newUserName = "";
     $('#new-user-name').focus();
   }

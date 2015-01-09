@@ -7,8 +7,11 @@
     <script src="bower_components/jquery/dist/jquery.js"></script>
     <script src="bower_components/lodash/dist/lodash.js"></script>
     <script src="bower_components/angular/angular.js"></script>
-    <script src="bower_components/angular-elastic/elastic.js"></script>
     <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="bower_components/ace-builds/src-min-noconflict/ace.js"></script>
+    <script src="bower_components/ace-builds/src-min-noconflict/mode-ejs.js"></script>
+    <script src="bower_components/ace-builds/src-min-noconflict/theme-chrome.js"></script>
+    <script src="bower_components/angular-ui-ace/ui-ace.js"></script>
     <script src="js/popup.js"></script>
   </head>
   <body ng-controller='prController as prCtrl'>
@@ -27,8 +30,9 @@
             </li>
           </ul>
         </section>
+        <hr>
         <section>
-          <button class="btn btn-primary" ng-click="prCtrl.copy('commit-messages')">Copy</button>
+          <button class="btn btn-primary pull-right" ng-click="prCtrl.copy('commit-messages')">Copy</button>
         </section>
       </tab>
 
@@ -36,12 +40,13 @@
         <tab-heading>
           Email
         </tab-heading>
-        <section id="email-container">
-          <div compile="prCtrl.template"></div>
-        </section>
         <section>
-          <button class="btn btn-default" ng-click="prCtrl.copy('email-container')">Copy</button>
-          <button class="btn btn-primary" ng-click="prCtrl.copyCompose('email-container')">Copy & Compose</button>
+          <div id="email-container" compile="prCtrl.template"></div>
+        </section>
+        <hr>
+        <section>
+          <button class="btn btn-primary pull-right" ng-click="prCtrl.copyCompose('email-container')">Copy & Compose</button>
+          <button class="btn btn-default pull-right" ng-click="prCtrl.copy('email-container')">Copy</button>
         </section>
       </tab>
 
@@ -65,12 +70,12 @@
             <label class="control-label" for="email_bcc">BCC</label>
             <input type="text" class="form-control" id="email_bcc" ng-model="prCtrl.emailBCC">
           </div>
-
-          <div class="form-group">
-            <label class="control-label" for="domainName">Domain name</label>
-            <input type="text" class="form-control" id="domainName" ng-model="prCtrl.domainName">
-          </div>
         </form>
+
+        <hr />
+        <section>
+          <button class="btn btn-primary pull-right" ng-click="prCtrl.saveMailTo()">Save</button>
+        </section>
       </tab>
 
       <tab>
@@ -84,9 +89,14 @@
         </div>
 
         <div class="form-group">
-          <label class="control-label" for="recipients">Recipients name</label>
+          <label class="control-label" for="recipients">Product owners</label>
           <input type="text" class="form-control" id="recipients" ng-model="prCtrl.recipients">
         </div>
+
+        <hr />
+        <section>
+          <button class="btn btn-primary pull-right" ng-click="prCtrl.saveProject()">Save</button>
+        </section>
       </tab>
 
       <tab>
@@ -105,20 +115,28 @@
             <input type="text" class="form-control" id="month-bills" ng-model="prCtrl.monthBills">
           </div>
         </form>
+
+        <hr />
+        <section>
+          <button class="btn btn-primary pull-right" ng-click="prCtrl.saveBillables()">Save</button>
+        </section>
       </tab>
 
       <tab>
         <tab-heading>
           Team
         </tab-heading>
-
+        <header>Team Info</header>
         <section>
-          <article>
-            <header>Team Name</header>
-            <section class="form-group">
-              <input type="text" class="form-control" id="teamName" ng-model="prCtrl.teamName">
-            </section>
-          </article>
+          <section class="form-group">
+            <label class="control-label" for="teamName">Team Name</label>
+            <input type="text" class="form-control" id="teamName" ng-model="prCtrl.teamName">
+          </section>
+
+          <section class="form-group">
+            <label class="control-label" for="domainName">Domain name</label>
+            <input type="text" class="form-control" id="domainName" ng-model="prCtrl.domainName">
+          </section>
 
           <article>
             <header>Team Members</header>
@@ -145,22 +163,26 @@
             </form>
           </article>
         </section>
+
+        <hr />
+        <section>
+          <button class="btn btn-primary pull-right" ng-click="prCtrl.saveTeam()">Save</button>
+        </section>
       </tab>
 
       <tab>
         <tab-heading>
           Template
         </tab-heading>
-        <textarea msd-elastic class="template" ng-model="prCtrl.template"></textarea> <br>
+        <header>Email template</header>
+        <div class="ace-editor" ui-ace="prCtrl.editorOptions" ng-model="prCtrl.template"></div>
+        <hr />
+        <section>
+          <button class="btn btn-primary pull-right" ng-click="prCtrl.saveTemplate()">Save</button>
+        </section>
       </tab>
     </tabset>
 
-    <hr />
-
   </body>
-
-  <script type="text/ng-template" id="templateId.html">
-    <p>This is the content of the template</p>
-  </script>
 </html>
 
