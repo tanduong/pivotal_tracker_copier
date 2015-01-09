@@ -81,6 +81,8 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
   this.emailCC    = localStorage["pr#emailCC"]  || "quang.huynh@eastagile.com, admin@eastagile.com";
   this.emailBCC   = localStorage["pr#emailBCC"] || "developers@eastagile.com";
   this.subject    = '[' + this.projectName + ']' + " Daily Report " + todayString();
+  this.currentEmailDomain = localStorage["pr#currentEmailDomain"] || "eastagile.com";
+
 
   try {
     this.lastUpdateBillCount = new Date(Date.parse(window.localStorage["lastUpdateBillCount"]));
@@ -207,7 +209,7 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
       email : this.newUserName + '@' + this.currentEmailDomain,
       bill  : 1
     });
-    localStorage["pr#currentEmailDomain"]   = this.currentEmailDomain;
+    localStorage["pr#currentEmailDomain"] = this.currentEmailDomain;
     this.newUserName = "";
     $('#new-user-name').focus();
   }
