@@ -14,6 +14,25 @@
     <tabset>
       <tab>
         <tab-heading>
+          Commit message
+        </tab-heading>
+
+        <section id='commit-messages'>
+          <ul>
+            <li class='commit-message' ng-repeat='todo in prCtrl.todos'>
+              <div>[?] - {{todo.name}}</div>
+              <div>[<a href="{{todo.url}}" target="_blank">{{todo.url}}</a>]</div>
+              <br>
+            </li>
+          </ul>
+        </section>
+        <section>
+          <button class="btn btn-primary" ng-click="prCtrl.copy('commit-messages')">Copy</button>
+        </section>
+      </tab>
+
+      <tab>
+        <tab-heading>
           Email
         </tab-heading>
         <section id="email-container">
@@ -25,7 +44,7 @@
             <section>
               <ul>
                 <li ng-repeat='work in prCtrl.works'>
-                  {{work.status}}
+                  {{work.status}} -
                   <a href="{{work.url}}" target="_blank">{{work.name}}</a>
                 </li>
               </ul>
@@ -56,7 +75,7 @@
             <header> How much time have we spent today? </header>
             <section>
               <ul>
-                <li> <span ng-bind="prCtrl.todayBills()"></span> days </li>
+                <li> <span ng-bind="prCtrl.todayBills"></span> days </li>
               </ul>
             </section>
           </article>
@@ -65,7 +84,7 @@
             <header> How much time have we spent this week? </header>
             <section>
               <ul>
-                <li> <span ng-bind="prCtrl.weekBills()"></span> days </li>
+                <li> <span ng-bind="prCtrl.weekBills"></span> days </li>
               </ul>
             </section>
           </article>
@@ -74,7 +93,7 @@
             <header> How much time have we spent this month? </header>
             <section>
               <ul>
-                <li> <span ng-bind="prCtrl.monthBills()"></span> days </li>
+                <li> <span ng-bind="prCtrl.monthBills"></span> days </li>
               </ul>
             </section>
           </article>
@@ -100,8 +119,8 @@
         </section>
 
         <section>
-          <button ng-click='prCtrl.copy()'>Copy</button>
-          <button ng-click='prCtrl.copyCompose()'>Copy & Compose</button>
+          <button class="btn btn-default" ng-click="prCtrl.copy('email-container')">Copy</button>
+          <button class="btn btn-primary" ng-click="prCtrl.copyCompose('email-container')">Copy & Compose</button>
         </section>
       </tab>
 
@@ -109,7 +128,7 @@
         <tab-heading>
           Mail to
         </tab-heading>
-
+        <header>Setting Emails</header>
         <form class="form">
           <div class="form-group">
             <label class="control-label" for="email_to">Email to</label>
@@ -150,10 +169,29 @@
 
       <tab>
         <tab-heading>
+          Billables
+        </tab-heading>
+        <header>Setting billable info</header>
+        <form class="form">
+          <div class="form-group">
+            <label class="control-label" for="week-bills">Week bills</label>
+            <input type="text" class="form-control" id="week-bills" ng-model="prCtrl.weekBills">
+          </div>
+
+          <div class="form-group">
+            <label class="control-label" for="month-bills">Month bills</label>
+            <input type="text" class="form-control" id="month-bills" ng-model="prCtrl.monthBills">
+          </div>
+        </form>
+      </tab>
+
+      <tab>
+        <tab-heading>
           Team members
         </tab-heading>
 
         <section>
+          <header>{{prCtrl.projectName}} members</header>
           <ul>
             <li ng-repeat='member in prCtrl.members'> <span>
               {{member.name}} ({{member.email}}) ({{member.bill}} billable day)
@@ -164,13 +202,13 @@
 
           <form class="form" ng-submit="prCtrl.addMember()">
             <div class="form-group">
-              <label class="control-label">Input addons</label>
+              <label class="control-label">New member</label>
               <div class="input-group">
                 <input type="text" class="form-control" placeholder="Username" ng-model="prCtrl.newUserName" id="new-user-name">
                 <span class="input-group-addon" id="sizing-addon2">@</span>
                 <input type="text" class="form-control" placeholder="Domain" ng-model="prCtrl.currentEmailDomain">
                 <span class="input-group-btn">
-                  <button class="btn btn-default" type="submit">Add</button>
+                  <button class="btn btn-primary" type="submit">Add</button>
                 </span>
               </div>
             </div>

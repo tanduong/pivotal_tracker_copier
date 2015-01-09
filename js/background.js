@@ -1,4 +1,5 @@
 chrome.runtime.onInstalled.addListener(function() {
+
   chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
     chrome.declarativeContent.onPageChanged.addRules([{
       conditions: [
@@ -11,3 +12,7 @@ chrome.runtime.onInstalled.addListener(function() {
     }]);
   });
 });
+
+function initSetting() {
+  localStorage["pr#domainName"] = "stanyangroup.com";
+}

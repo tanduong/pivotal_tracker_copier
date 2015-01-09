@@ -19,16 +19,10 @@ function getProgress(actions) {
   var priorities = ['delivered', 'finished', 'started'];
   var blackList = ['rejected'];
   for(var i = 0; i < actions.length; i++){
-    for(var j = 0; j < blackList.length; j++) {
-      if(actions[i].match(blackList[j])) {
-        return null;
-      }
-    }
-
-    for(var j = 0; j < whiteList.length; j++) {
-      if(actions[i].match(whiteList[j])) {
-        return whiteList[j];
-      }
+    if(blackList.indexOf(actions[i]) > 0){
+      return null;
+    } else if(priorities.indexOf(actions[i]) > 0) {
+      return actions[i];
     }
   }
 }
@@ -64,11 +58,11 @@ function getLatestStories(activityInfo) {
 
 function getRecentActivities() {
   var activities = $(".item.activity_entry");
+  var duration = 12 * 60 * 60 * 1000;
 
   return activities.filter(function(index, activity){
     var millis = $(activity).find('.time_ago').data('millis');
     var now = new Date();
-    var duration = 12 * 60 * 60 * 1000;
 
     if(now - millis < duration) {
       return true;
@@ -95,7 +89,7 @@ function humanize(string) {
 function statusString(status) {
   status = status == 'started' ? 'WIP' : status;
   status = status == 'unstarted' ? '' : status;
-  return status ? humanize(status) + ' - ' : '';
+  return status ? humanize(status) : '';
 }
 
 function storyLink(storyID) {

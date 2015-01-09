@@ -1,8 +1,17 @@
 body {
   width: 800px;
-  padding: 5px;
+  overflow-x: scroll;
+  padding: 10px;
 }
 
 article header {
   font-weight: bold;
+}
+
+li.commit-message {
+  list-style: none;
+}
+
+div.tab-content {
+  padding-top: 15px;
 }

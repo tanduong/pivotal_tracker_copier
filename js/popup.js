@@ -18,6 +18,15 @@ function formatName(userName){
   }).join(' ');
 }
 
+function formatDate(date) {
+  var month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  return month[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear();
+}
+
+function todayString() {
+  return formatDate(new Date());
+}
+
 prModule.controller('prController', function($scope, $compile) {
   this.$scope = $scope;
   this.domainName = "stanyangroup.com";
@@ -28,33 +37,50 @@ prModule.controller('prController', function($scope, $compile) {
 
   this.todos = [];
 
-  this.members    = JSON.parse(localStorage["pr#members"]) || [];
   this.teamName   = localStorage["pr#teamName"];
   this.domainName = localStorage["pr#domainName"];
   this.recipients = localStorage["pr#recipients"];
   this.projectName= localStorage["pr#projectName"];
-
   this.emailTo    = localStorage["pr#emailTo"];
   this.emailCC    = localStorage["pr#emailCC"];
   this.emailBCC   = localStorage["pr#emailBCC"];
-  this.subject    = "[EA Daily Report] " + this.projectName + " " + (new Date()).toDateString();
+  this.subject    = '[' + this.projectName + ']' + " Daily Report " + todayString();
 
-  this.todayBills  = function() {
-    return this.members.map(function(member) { return member.bill; }).reduce(function(state, val) { return state + val; }, 0);
+  this.lastUpdateBillCount = new Date(Date.parse(window.localStorage["lastUpdateBillCount"]));
+  this.oldWeekBills  = window.localStorage["weekBills"]  || 0;
+  this.oldMonthBills = window.localStorage["monthBills"] || 0;
+
+  this.computeBills = function(members) {
+    return members.map(function(member) { return member.bill; }).reduce(function(state, val) { return state + val; }, 0);
   };
 
-  this.weekBills   = function() {
-    return (new Date()).getDay() == 1  ? this.todayBills() : (window.localStorage["weekBills"] || 0)  + this.todayBills();
-  };
+  this.computeWeekBills = function(todayBills) {
+    return (new Date()).getDay() == 1  ? todayBills : this.oldWeekBills  + todayBills;
+  }.bind(this);
 
-  this.monthBills  = function() {
-    return (new Date()).getDate() == 1 ? this.todayBills() : (window.localStorage["monthBills"] || 0) + this.todayBills();
-  };
+  this.computeMonthBills = function(todayBills) {
+    return (new Date()).getDate() == 1 ? todayBills : this.oldMonthBills + todayBills;
+  }.bind(this);
 
+  this.todayBills = 0;
 
+  $scope.$watch('prCtrl.todayBills', function(todayBills){
+    debugger;
+    this.weekBills  = this.computeWeekBills(todayBills);
+    this.monthBills = this.computeMonthBills(todayBills);
+  }.bind(this));
 
-  var copy = function() {
-    selectText('email-container');
+  this.members = [];
+
+  $scope.$watchCollection('prCtrl.members', function(members){
+    debugger;
+    this.todayBills = this.computeBills(members);
+  }.bind(this));
+
+  this.members = JSON.parse(localStorage["pr#members"]) || [];
+
+  var copy = function(elId) {
+    selectText(elId);
     document.execCommand('copy');
     document.getSelection().removeAllRanges();
   }
@@ -71,19 +97,24 @@ prModule.controller('prController', function($scope, $compile) {
       domainName: this.domainName
     };
     copy();
+    makeGmailWin(options);
+  }
 
+  this.commitEmail = function(){
     localStorage["pr#members"]    = JSON.stringify(this.members);
     localStorage["pr#teamName"]   = this.teamName;
     localStorage["pr#domainName"] = this.domainName;
     localStorage["pr#recipients"] = this.recipients;
     localStorage["pr#projectName"]= this.projectName;
-
     localStorage["pr#emailTo"]    = this.emailTo;
     localStorage["pr#emailCC"]    = this.emailCC;
     localStorage["pr#emailBCC"]   = this.emailBCC;
-
-    makeGmailWin(options);
-  }
+    if((new Date()) - this.lastUpdateBillCount > 12 * 60 * 60 * 1000) {
+      localStorage["pr#lastUpdateBillCount"] = (new Date()).toUTCString();
+      this.oldWeekBills  = window.localStorage["weekBills"]  = this.weekBills;
+      this.oldMonthBills = window.localStorage["monthBills"] = this.monthBills;
+    }
+  };
 
   this.safeApply = function(fn) {
     var phase = this.$scope.$root.$$phase;
