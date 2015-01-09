@@ -7,6 +7,7 @@
     <script src="bower_components/jquery/dist/jquery.js"></script>
     <script src="bower_components/lodash/dist/lodash.js"></script>
     <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-elastic/elastic.js"></script>
     <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
     <script src="js/popup.js"></script>
   </head>
@@ -150,7 +151,7 @@
         <tab-heading>
           Template
         </tab-heading>
-        <textarea elastic class="template" ng-model="prCtrl.template"></textarea> <br>
+        <textarea msd-elastic class="template" ng-model="prCtrl.template"></textarea> <br>
       </tab>
     </tabset>
 

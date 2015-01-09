@@ -1,4 +1,4 @@
-var prModule = angular.module('myModule', ['ui.bootstrap'], ['$compileProvider', function($compileProvider) {
+var prModule = angular.module('myModule', ['ui.bootstrap', 'monospaced.elastic'], ['$compileProvider', function($compileProvider) {
   $compileProvider.directive('compile', function($compile) {
     return function(scope, element, attrs) {
       scope.$watch(
