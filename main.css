@@ -1,0 +1,8 @@
+body {
+  width: 800px;
+  padding: 5px;
+}
+
+article header {
+  font-weight: bold;
+}

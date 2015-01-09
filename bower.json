@@ -1,0 +1,23 @@
+{
+  "name": "pivotalcopier",
+  "version": "1.0.4",
+  "homepage": "https://github.com/tanduong/pivotal_tracker_copier",
+  "authors": [
+    "dntan09"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-ui-tinymce": "latest"
+  },
+  "devDependencies": {
+    "lodash": "~2.4.1",
+    "jquery": "~2.1.3"
+  }
+}

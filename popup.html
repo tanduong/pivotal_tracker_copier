@@ -1,26 +1,190 @@
 <!doctype html>
-<html>
+<html ng-app='myModule' ng-csp>
   <head>
-    <title>Getting Started Extension's Popup</title>
-    <style>
-      body {
-        min-width: 357px;
-        overflow-x: hidden;
-      }
-
-      img {
-        margin: 5px;
-        border: 2px solid black;
-        vertical-align: middle;
-        width: 75px;
-        height: 75px;
-      }
-    </style>
-    <script src="jquery.js"></script>
-    <script src="lodash.js"></script>
-    <script src="popup.js"></script>
+    <title>Pivotal Tracker Email Reporter</title>
+    <link rel="stylesheet" href="bootstrap.min.css"/>
+    <link rel="stylesheet" href="main.css"/>
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/lodash/dist/lodash.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="js/popup.js"></script>
   </head>
-  <body id='body'>
+  <body ng-controller='prController as prCtrl'>
+    <tabset>
+      <tab>
+        <tab-heading>
+          Email
+        </tab-heading>
+        <section id="email-container">
+          <header>Hi {{prCtrl.recipients || "everyone"}},</header>
+          <br/>
+
+          <article>
+            <header> What has the team done since the last call/email regarding this project? </header>
+            <section>
+              <ul>
+                <li ng-repeat='work in prCtrl.works'>
+                  {{work.status}}
+                  <a href="{{work.url}}" target="_blank">{{work.name}}</a>
+                </li>
+              </ul>
+            </section>
+          </article>
+
+          <article>
+            <header> What will the team do between now and next call/email regarding this project? </header>
+            <section>
+              <ul>
+                <li ng-repeat='todo in prCtrl.todos'>
+                  <a href="{{todo.url}}" target="_blank">{{todo.name}}</a>
+                </li>
+              </ul>
+            </section>
+          </article>
+
+          <article>
+            <header> What impedes the team from performing their work as effectively as possible? </header>
+            <section>
+              <ul>
+                <li> Anythings? </li>
+              </ul>
+            </section>
+          </article>
+
+          <article>
+            <header> How much time have we spent today? </header>
+            <section>
+              <ul>
+                <li> <span ng-bind="prCtrl.todayBills()"></span> days </li>
+              </ul>
+            </section>
+          </article>
+
+          <article>
+            <header> How much time have we spent this week? </header>
+            <section>
+              <ul>
+                <li> <span ng-bind="prCtrl.weekBills()"></span> days </li>
+              </ul>
+            </section>
+          </article>
+
+          <article>
+            <header> How much time have we spent this month? </header>
+            <section>
+              <ul>
+                <li> <span ng-bind="prCtrl.monthBills()"></span> days </li>
+              </ul>
+            </section>
+          </article>
+
+          <article>
+            <header> Our team today: </header>
+            <section>
+              <ul>
+                <li ng-repeat='member in prCtrl.members'>
+                  {{member.name}}
+                  <a href="mailto:{{member.email}}?Subject={{encodeURIComponent('Re:' + prCtrl.subject)}}" target="_top">
+                    ({{member.email}})
+                  </a>
+                  ({{member.bill}} billable day)
+                </li>
+              </ul>
+            </section>
+          </article>
+
+          <p>Best regards,</p>
+
+          <p>{{prCtrl.teamName}}</p>
+        </section>
+
+        <section>
+          <button ng-click='prCtrl.copy()'>Copy</button>
+          <button ng-click='prCtrl.copyCompose()'>Copy & Compose</button>
+        </section>
+      </tab>
+
+      <tab>
+        <tab-heading>
+          Mail to
+        </tab-heading>
+
+        <form class="form">
+          <div class="form-group">
+            <label class="control-label" for="email_to">Email to</label>
+            <input type="text" class="form-control" id="email_to" ng-model="prCtrl.emailTo">
+          </div>
+
+          <div class="form-group">
+            <label class="control-label" for="email_cc">CC</label>
+            <input type="text" class="form-control" id="email_cc" ng-model="prCtrl.emailCC">
+          </div>
+
+          <div class="form-group">
+            <label class="control-label" for="email_bcc">BCC</label>
+            <input type="text" class="form-control" id="email_bcc" ng-model="prCtrl.emailBCC">
+          </div>
+
+          <div class="form-group">
+            <label class="control-label" for="teamName">Team name</label>
+            <input type="text" class="form-control" id="teamName" ng-model="prCtrl.teamName">
+          </div>
+
+          <div class="form-group">
+            <label class="control-label" for="domainName">Domain name</label>
+            <input type="text" class="form-control" id="domainName" ng-model="prCtrl.domainName">
+          </div>
+
+          <div class="form-group">
+            <label class="control-label" for="projectName">Project Name</label>
+            <input type="text" class="form-control" id="projectName" ng-model="prCtrl.projectName">
+          </div>
+
+          <div class="form-group">
+            <label class="control-label" for="recipients">Recipients name</label>
+            <input type="text" class="form-control" id="recipients" ng-model="prCtrl.recipients">
+          </div>
+        </form>
+      </tab>
+
+      <tab>
+        <tab-heading>
+          Team members
+        </tab-heading>
+
+        <section>
+          <ul>
+            <li ng-repeat='member in prCtrl.members'> <span>
+              {{member.name}} ({{member.email}}) ({{member.bill}} billable day)
+            </span>
+            <a href="#" ng-click="prCtrl.deleteMember(member)">remove</a>
+            </li>
+          </ul>
+
+          <form class="form" ng-submit="prCtrl.addMember()">
+            <div class="form-group">
+              <label class="control-label">Input addons</label>
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Username" ng-model="prCtrl.newUserName" id="new-user-name">
+                <span class="input-group-addon" id="sizing-addon2">@</span>
+                <input type="text" class="form-control" placeholder="Domain" ng-model="prCtrl.currentEmailDomain">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="submit">Add</button>
+                </span>
+              </div>
+            </div>
+          </form>
+        </section>
+      </tab>
+    </tabset>
+
+    <hr />
+
   </body>
+
+  <script type="text/ng-template" id="templateId.html">
+    <p>This is the content of the template</p>
+  </script>
 </html>
 
