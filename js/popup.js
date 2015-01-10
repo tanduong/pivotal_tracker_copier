@@ -54,7 +54,7 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
   this.$scope = $scope;
   var ctrl = this;
 
-  this.template = localStorage["pr#template"] || template;
+  this.template = localStorage["pr#template"] || TEMPLATE;
   this.editorOptions = {
       require: ['ace/ext/language_tools'],
       advanced: {
@@ -147,6 +147,10 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
     localStorage["pr#template"]   = this.template;
   };
 
+  this.resetTemplate = function() {
+    this.template = TEMPLATE;
+  }
+
   this.saveTeam = function() {
     localStorage["pr#teamName"]   = this.teamName;
     localStorage["pr#members"]    = JSON.stringify(this.members);
@@ -175,7 +179,11 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
     if(this.oldMonthBills + this.todayBills != this.monthBills) return true;
     if(this.oldWeekBills + this.todayBills != this.weekBills)   return true;
     return this.lastUpdateBillCount &&(new Date()) - this.lastUpdateBillCount > 12 * 60 * 60 * 1000;
-  }
+  };
+
+  this.noStories = function(){
+    return !this.todos || (typeof this.todos != "Array") || this.todos.length == 0;
+  };
 
   this.commitEmail = function(){
     this.saveProject();
@@ -271,7 +279,7 @@ function hereDoc(f) {
       replace(/\*\/[^\/]+$/, '');
 }
 
-var template = hereDoc(function() {/*!
+var TEMPLATE = hereDoc(function() {/*!
 <header>Hi {{prCtrl.recipients || "everyone"}},</header>
 <br/>
 

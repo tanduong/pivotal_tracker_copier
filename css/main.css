@@ -29,7 +29,7 @@ ul.btn.pull-right {
 }
 
 ul.nav.nav-tabs li.active a, .nav.nav-tabs li:hover a {
-  background-color: rgba(225, 231, 231, 0.48);
+  /*background-color: rgba(225, 231, 231, 0.48);*/
 }
 
 ul.nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus {
@@ -53,7 +53,9 @@ ul.nav.nav-tabs > li:first-child {
 .tab-content {
   border: 1px solid #dddddd;
   border-top: none;
-  padding: 5px 10px;
+  padding: 5px 5px;
+  margin: 1px;
+  margin-top: 0;
   min-height: 231px;
   clear: both;
 }
@@ -61,4 +63,12 @@ ul.nav.nav-tabs > li:first-child {
 #email-container {
   overflow-y: scroll;
   max-height: 398px;
+}
+
+.btn.pull-right + .btn.pull-right {
+  margin-right: 15px;
+}
+
+p.no-stories {
+  margin-bottom: 92px;
 }

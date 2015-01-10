@@ -17,14 +17,14 @@
     <script src="js/popup.js"></script>
   </head>
   <body ng-controller='prController as prCtrl'>
-    <tabset>
+    <tabset justified="true">
       <tab heading="Justified" select="prCtrl.select(0)" active="prCtrl.tabActivity[0]">
         <tab-heading>
           Commit message
         </tab-heading>
         <h4>Generated message</h4>
         <section id='commit-messages'>
-          <p ng-show="prCtrl.todos && (typeof prCtrl.todos == 'Array') && prCtrl.todos.length > 0">
+          <p class="no-stories" ng-show='prCtrl.noStories()'>
             Please select some stories to generate message.
           </p>
           <ul>
@@ -36,7 +36,7 @@
           </ul>
         </section>
         <hr>
-        <section>
+        <section class="clearfix">
           <button class="btn btn-success pull-right" ng-click="prCtrl.copy('commit-messages')">Copy</button>
         </section>
       </tab>
@@ -165,7 +165,7 @@
               <li ng-repeat='member in prCtrl.members'> <span>
                 {{member.name}} ({{member.email}}) ({{member.bill}} billable day)
               </span>
-              <a href="#" ng-click="prCtrl.deleteMember(member)">remove</a>
+              <button class="btn btn-danger btn-sm" ng-click="prCtrl.deleteMember(member)">remove</button>
               </li>
             </ul>
 
@@ -177,7 +177,7 @@
                   <span class="input-group-addon" id="sizing-addon2">@</span>
                   <input type="text" class="form-control" placeholder="Domain" ng-model="prCtrl.currentEmailDomain">
                   <span class="input-group-btn">
-                    <button class="btn btn-primary" type="submit">Add</button>
+                    <button class="btn btn-success" type="submit">Add</button>
                   </span>
                 </div>
               </div>
@@ -200,6 +200,7 @@
         <hr />
         <section class="clearfix">
           <button class="btn btn-primary pull-right" ng-click="prCtrl.saveTemplate()">Save</button>
+          <button class="btn btn-warning pull-right" ng-click="prCtrl.resetTemplate()">Reset</button>
         </section>
       </tab>
     </tabset>
