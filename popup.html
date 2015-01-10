@@ -10,14 +10,15 @@
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
     <script src="bower_components/ace-builds/src-noconflict/ace.js"></script>
+    <script src="bower_components/ace-builds/src-noconflict/ext-language_tools.js"></script>
     <script src="bower_components/ace-builds/src-noconflict/mode-ejs.js"></script>
-    <script src="bower_components/ace-builds/src-noconflict/theme-chrome.js"></script>
+    <script src="bower_components/ace-builds/src-noconflict/theme-tomorrow.js"></script>
     <script src="bower_components/angular-ui-ace/ui-ace.js"></script>
     <script src="js/popup.js"></script>
   </head>
   <body ng-controller='prController as prCtrl'>
     <tabset>
-      <tab>
+      <tab heading="Justified">
         <tab-heading>
           Commit message
         </tab-heading>
@@ -25,7 +26,7 @@
         <section id='commit-messages'>
           <ul>
             <li class='commit-message' ng-repeat='todo in prCtrl.todos'>
-              <div>[?] - {{todo.name}}</div>
+              <div>[f] - {{todo.name}}</div>
               <div>[<a href="{{todo.url}}" target="_blank">{{todo.url}}</a>]</div>
               <br>
             </li>
@@ -37,7 +38,7 @@
         </section>
       </tab>
 
-      <tab>
+      <tab heading="Justified">
         <tab-heading>
           Email
         </tab-heading>
@@ -52,7 +53,7 @@
         </section>
       </tab>
 
-      <tab>
+      <tab heading="Justified">
         <tab-heading>
           Mail to
         </tab-heading>
@@ -80,7 +81,7 @@
         </section>
       </tab>
 
-      <tab>
+      <tab heading="Justified">
         <tab-heading>
           Project
         </tab-heading>
@@ -101,7 +102,7 @@
         </section>
       </tab>
 
-      <tab>
+      <tab heading="Justified">
         <tab-heading>
           Bills
         </tab-heading>
@@ -128,12 +129,12 @@
 
         <form class="form">
           <div class="form-group">
-            <label class="control-label" for="week-bills">Week bills now</label>
+            <label class="control-label" for="week-bills">Today Week bills Computed</label>
             <input type="text" class="form-control" id="week-bills" ng-model="prCtrl.weekBills">
           </div>
 
           <div class="form-group">
-            <label class="control-label" for="month-bills">Month bills now</label>
+            <label class="control-label" for="month-bills">Today Month bills Computed</label>
             <input type="text" class="form-control" id="month-bills" ng-model="prCtrl.monthBills">
           </div>
         </form>
@@ -144,7 +145,7 @@
         </section>
       </tab>
 
-      <tab>
+      <tab heading="Justified">
         <tab-heading>
           Team
         </tab-heading>
@@ -192,7 +193,7 @@
         </section>
       </tab>
 
-      <tab>
+      <tab heading="Justified">
         <tab-heading>
           Template
         </tab-heading>

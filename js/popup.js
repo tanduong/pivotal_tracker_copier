@@ -87,8 +87,15 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
 
   this.template = localStorage["pr#template"] || template;
   this.editorOptions = {
+      require: ['ace/ext/language_tools'],
+      advanced: {
+        showGutter: true,
+        enableSnippets: true,
+        enableBasicAutocompletion: true,
+        enableLiveAutocompletion: true
+      },
       mode: 'ejs',
-      theme: 'chrome'
+      theme: 'tomorrow'
   };
 
   this.$scope = $scope;
@@ -100,6 +107,7 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
 
   this.teamName   = localStorage["pr#teamName"] || "The East Agile Team";
   this.domainName = localStorage["pr#domainName"];
+  this.placeholder = localStorage["pr#placeholder"];
   this.recipients = localStorage["pr#recipients"];
   this.projectName= localStorage["pr#projectName"];
   this.emailTo    = localStorage["pr#emailTo"];
@@ -205,7 +213,7 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
       to        : this.emailTo,
       cc        : this.emailCC,
       bcc       : this.emailBCC,
-      body      : "Paste here",
+      body      : this.placeholder ? this.placeholder : '',
       domainName: this.domainName
     };
     copy(elId);
@@ -243,7 +251,6 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
     if (request.msg != "pt_stories") { return; }
     $scope.prCtrl.works       = request.works;
     $scope.prCtrl.todos       = request.todos;
-    $scope.prCtrl.projectName = $scope.prCtrl.projectName || humanize(request.projectName);
     $scope.prCtrl.subject     = '[' + this.projectName + ']' + " Daily Report " + todayString();
     $scope.prCtrl.safeApply();
   });

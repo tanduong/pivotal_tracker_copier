@@ -19,9 +19,9 @@ function getProgress(actions) {
   var priorities = ['delivered', 'finished', 'started'];
   var blackList = ['rejected'];
   for(var i = 0; i < actions.length; i++){
-    if(blackList.indexOf(actions[i]) > 0){
+    if(blackList.indexOf(actions[i]) >= 0){
       return null;
-    } else if(priorities.indexOf(actions[i]) > 0) {
+    } else if(priorities.indexOf(actions[i]) >= 0) {
       return actions[i];
     }
   }
@@ -138,16 +138,11 @@ function getSelectedStories() {
   return res;
 }
 
-function getProjectName() {
-  return $('.this_project .project_name a').text();
-}
-
 var works, todos;
 +function(){
   var opened = openProjectHistory();
   var works = formatedData(getLatestStories(extractInfo(getRecentActivities())));
   var todos = formatedData(getSelectedStories());
-  var projectName = getProjectName();
   chrome.extension.sendMessage({msg: "pt_stories", projectName: projectName, works: works, todos: todos});
   if(opened) {
     closeProjectHistory();

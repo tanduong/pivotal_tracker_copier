@@ -1,11 +1,15 @@
 function loadSavedOptions() {
-  if (window.localStorage == null) {
+  if (localStorage == null) {
     alert("LocalStorage must be enabled for managing options.");
     return;
   }
-  var domainName = window.localStorage["domainName"];
+  var domainName = localStorage["pr#domainName"];
   if (domainName) {
     document.getElementById('domain_info').value = domainName;
+  }
+  var placeholder = localStorage["pr#placeholder"];
+  if (placeholder) {
+    document.getElementById('placeholder').value = placeholder;
   }
 }
 
@@ -15,7 +19,13 @@ function saveOptions() {
     alert("Does not look like a valid domain - " +
           domainVal + "\nPlease re-enter");
   } else {
-    window.localStorage["domainName"] = domainVal;
+    localStorage["pr#domainName"] = domainVal;
+  }
+
+  if (domainVal != "") {
+    localStorage["pr#placeholder"] = placeholder;
+  } else {
+    localStorage.removeItem("pr#placeholder");
   }
 }
 
