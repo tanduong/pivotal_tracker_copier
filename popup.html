@@ -18,12 +18,15 @@
   </head>
   <body ng-controller='prController as prCtrl'>
     <tabset>
-      <tab heading="Justified">
+      <tab heading="Justified" select="prCtrl.select(0)" active="prCtrl.tabActivity[0]">
         <tab-heading>
           Commit message
         </tab-heading>
         <h4>Generated message</h4>
         <section id='commit-messages'>
+          <p ng-show="prCtrl.todos && (typeof prCtrl.todos == 'Array') && prCtrl.todos.length > 0">
+            Please select some stories to generate message.
+          </p>
           <ul>
             <li class='commit-message' ng-repeat='todo in prCtrl.todos'>
               <div>[f] - {{todo.name}}</div>
@@ -38,7 +41,7 @@
         </section>
       </tab>
 
-      <tab heading="Justified">
+      <tab heading="Justified" select="prCtrl.select(1)" active="prCtrl.tabActivity[1]">
         <tab-heading>
           Email
         </tab-heading>
@@ -47,13 +50,13 @@
           <div id="email-container" compile="prCtrl.template"></div>
         </section>
         <hr>
-        <section>
+        <section class="clearfix">
           <button class="btn btn-success pull-right" ng-click="prCtrl.copyCompose('email-container')">Copy & Compose</button>
           <button class="btn btn-warning pull-right" ng-click="prCtrl.copy('email-container')">Copy</button>
         </section>
       </tab>
 
-      <tab heading="Justified">
+      <tab heading="Justified" select="prCtrl.select(2)" active="prCtrl.tabActivity[2]">
         <tab-heading>
           Mail to
         </tab-heading>
@@ -76,12 +79,12 @@
         </form>
 
         <hr />
-        <section>
+        <section class="clearfix">
           <button class="btn btn-primary pull-right" ng-click="prCtrl.saveMailTo()">Save</button>
         </section>
       </tab>
 
-      <tab heading="Justified">
+      <tab heading="Justified" select="prCtrl.select(3)" active="prCtrl.tabActivity[3]">
         <tab-heading>
           Project
         </tab-heading>
@@ -97,12 +100,12 @@
         </div>
 
         <hr />
-        <section>
+        <section class="clearfix">
           <button class="btn btn-primary pull-right" ng-click="prCtrl.saveProject()">Save</button>
         </section>
       </tab>
 
-      <tab heading="Justified">
+      <tab heading="Justified" select="prCtrl.select(4)" active="prCtrl.tabActivity[4]">
         <tab-heading>
           Bills
         </tab-heading>
@@ -140,12 +143,12 @@
         </form>
 
         <hr />
-        <section>
+        <section class="clearfix">
           <button class="btn btn-primary pull-right" ng-click="prCtrl.saveBillables()">Save</button>
         </section>
       </tab>
 
-      <tab heading="Justified">
+      <tab heading="Justified" select="prCtrl.select(5)" active="prCtrl.tabActivity[5]">
         <tab-heading>
           Team
         </tab-heading>
@@ -155,11 +158,6 @@
             <label class="control-label" for="teamName">Team Name</label>
             <input type="text" class="form-control" id="teamName" ng-model="prCtrl.teamName">
           </section>
-
-          <!-- <section class="form-group">
-            <label class="control-label" for="domainName">Domain name</label>
-            <input type="text" class="form-control" id="domainName" ng-model="prCtrl.domainName">
-          </section> -->
 
           <article>
             <header>Team Members</header>
@@ -188,19 +186,19 @@
         </section>
 
         <hr />
-        <section>
+        <section class="clearfix">
           <button class="btn btn-primary pull-right" ng-click="prCtrl.saveTeam()">Save</button>
         </section>
       </tab>
 
-      <tab heading="Justified">
+      <tab heading="Justified" select="prCtrl.select(6)" active="prCtrl.tabActivity[6]">
         <tab-heading>
           Template
         </tab-heading>
         <h4>Email template</h4>
         <div class="ace-editor" ui-ace="prCtrl.editorOptions" ng-model="prCtrl.template"></div>
         <hr />
-        <section>
+        <section class="clearfix">
           <button class="btn btn-primary pull-right" ng-click="prCtrl.saveTemplate()">Save</button>
         </section>
       </tab>

@@ -51,39 +51,8 @@ function parseDate(dateString) {
 
 
 prModule.controller('prController', function($scope, $compile, $timeout) {
-  $scope.today = function() {
-      $scope.dt = new Date();
-    };
-    $scope.today();
-
-    $scope.clear = function () {
-      $scope.dt = null;
-    };
-
-    // Disable weekend selection
-    $scope.disabled = function(date, mode) {
-      return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
-    };
-
-    $scope.toggleMin = function() {
-      $scope.minDate = $scope.minDate ? null : new Date();
-    };
-    $scope.toggleMin();
-
-    $scope.open = function($event) {
-      $event.preventDefault();
-      $event.stopPropagation();
-
-      $scope.opened = true;
-    };
-
-    $scope.dateOptions = {
-      formatYear: 'yy',
-      startingDay: 1
-    };
-
-    $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
-    $scope.format = $scope.formats[0];
+  this.$scope = $scope;
+  var ctrl = this;
 
   this.template = localStorage["pr#template"] || template;
   this.editorOptions = {
@@ -98,7 +67,6 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
       theme: 'tomorrow'
   };
 
-  this.$scope = $scope;
   this.domainName = localStorage["pr#domainName"] || "stanyangroup.com";
 
   this.works = [];
@@ -122,6 +90,8 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
 
   this.oldWeekBills  = +window.localStorage["weekBills"]  || 0;
   this.oldMonthBills = +window.localStorage["monthBills"] || 0;
+  this.tabActivity = Array.apply(null, Array(7)).map(Boolean);
+  this.tabActivity[+localStorage['pr#currentTab']] = true;
 
   this.computeBills = function(members) {
     return members.map(function(member) { return member.bill; }).reduce(function(state, val) { return state + val; }, 0);
@@ -162,6 +132,16 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
   }
 
   this.copy = copy;
+
+  this.currentTab = localStorage['pr#currentTab'] == undefined ? 'commit' : localStorage['pr#currentTab'];
+
+  this.select = function(tabIdex) {
+    localStorage['pr#currentTab'] = tabIdex;
+  };
+
+  $scope.$watch('prCtrl.currentTab', function(selectedTab) {
+    localStorage['pr#currentTab'] = selectedTab;
+  });
 
   this.saveTemplate = function(){
     localStorage["pr#template"]   = this.template;
