@@ -143,7 +143,7 @@ var works, todos;
   var opened = openProjectHistory();
   var works = formatedData(getLatestStories(extractInfo(getRecentActivities())));
   var todos = formatedData(getSelectedStories());
-  chrome.extension.sendMessage({msg: "pt_stories", projectName: projectName, works: works, todos: todos});
+  chrome.extension.sendMessage({msg: "pt_stories", works: works, todos: todos});
   if(opened) {
     closeProjectHistory();
   }
