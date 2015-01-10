@@ -138,12 +138,17 @@ function getSelectedStories() {
   return res;
 }
 
+function getProjectName() {
+  return $('.this_project .project_name a').text();
+}
+
 var works, todos;
 +function(){
   var opened = openProjectHistory();
-  works = formatedData(getLatestStories(extractInfo(getRecentActivities())));
-  todos = formatedData(getSelectedStories());
-  chrome.extension.sendMessage({msg: "pt_stories", works: works, todos: todos});
+  var works = formatedData(getLatestStories(extractInfo(getRecentActivities())));
+  var todos = formatedData(getSelectedStories());
+  var projectName = getProjectName();
+  chrome.extension.sendMessage({msg: "pt_stories", projectName: projectName, works: works, todos: todos});
   if(opened) {
     closeProjectHistory();
   }

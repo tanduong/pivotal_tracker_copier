@@ -3,16 +3,16 @@
   <head>
     <title>Pivotal Tracker Email Reporter</title>
     <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" href"css/angular-csp.css"/>
     <link rel="stylesheet" href="css/main.css"/>
-    <link rel="css/angular-csp.css"/>
-    <script src="bower_components/jquery/dist/jquery.min.js"></script>
-    <script src="bower_components/lodash/dist/lodash.min.js"></script>
-    <script src="bower_components/angular/angular.min.js"></script>
-    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
-    <script src="bower_components/ace-builds/src-min-noconflict/ace.js"></script>
-    <script src="bower_components/ace-builds/src-min-noconflict/mode-ejs.js"></script>
-    <script src="bower_components/ace-builds/src-min-noconflict/theme-chrome.js"></script>
-    <script src="bower_components/angular-ui-ace/ui-ace.min.js"></script>
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/lodash/dist/lodash.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="bower_components/ace-builds/src-noconflict/ace.js"></script>
+    <script src="bower_components/ace-builds/src-noconflict/mode-ejs.js"></script>
+    <script src="bower_components/ace-builds/src-noconflict/theme-chrome.js"></script>
+    <script src="bower_components/angular-ui-ace/ui-ace.js"></script>
     <script src="js/popup.js"></script>
   </head>
   <body ng-controller='prController as prCtrl'>
@@ -21,7 +21,7 @@
         <tab-heading>
           Commit message
         </tab-heading>
-
+        <h4>Generated message</h4>
         <section id='commit-messages'>
           <ul>
             <li class='commit-message' ng-repeat='todo in prCtrl.todos'>
@@ -41,6 +41,7 @@
         <tab-heading>
           Email
         </tab-heading>
+        <h4>Generated email</h4>
         <section>
           <div id="email-container" compile="prCtrl.template"></div>
         </section>
@@ -55,7 +56,7 @@
         <tab-heading>
           Mail to
         </tab-heading>
-        <header>Setting Emails</header>
+        <h4>Setting Emails</h4>
         <form class="form">
           <div class="form-group">
             <label class="control-label" for="email_to">Email to</label>
@@ -83,7 +84,7 @@
         <tab-heading>
           Project
         </tab-heading>
-        <header>Project Info</header>
+        <h4>Project Info</h4>
         <div class="form-group">
           <label class="control-label" for="projectName">Project Name</label>
           <input type="text" class="form-control" id="projectName" ng-model="prCtrl.projectName">
@@ -104,8 +105,7 @@
         <tab-heading>
           Bills
         </tab-heading>
-        <header>Setting Bill Count</header>
-
+        <h4>Setting Bill Count</h4>
         <div class="form-group">
           <label class="control-label" for="disabledInput">Old Week Bill Count</label>
           <input class="form-control" id="disabledInput" type="text" placeholder="{{prCtrl.oldWeekBills}}" disabled="">
@@ -117,8 +117,13 @@
         </div>
 
         <div class="form-group">
-          <label class="control-label" for="disabledInput">Recorded at</label>
-          <input class="form-control" id="disabledInput" type="date" ng-model="prCtrl.lastUpdateBillCount" disabled="">
+          <label class="control-label">Recorded at</label>
+          <p class="input-group">
+            <input type="text" class="form-control" ng-model="prCtrl.lastUpdateBillCount" disabled=""/>
+            <span class="input-group-btn">
+              <button type="button" class="btn btn-default" disabled=""><i class="glyphicon glyphicon-calendar"></i></button>
+            </span>
+          </p>
         </div>
 
         <form class="form">
@@ -143,7 +148,7 @@
         <tab-heading>
           Team
         </tab-heading>
-        <header>Team Info</header>
+        <h4>Team Info</h4>
         <section>
           <section class="form-group">
             <label class="control-label" for="teamName">Team Name</label>
@@ -191,7 +196,7 @@
         <tab-heading>
           Template
         </tab-heading>
-        <header>Email template</header>
+        <h4>Email template</h4>
         <div class="ace-editor" ui-ace="prCtrl.editorOptions" ng-model="prCtrl.template"></div>
         <hr />
         <section>

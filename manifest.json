@@ -10,7 +10,7 @@
   "content_scripts": [
     {
       "matches": ["https://www.pivotaltracker.com/n/projects/*"],
-      "js"     : ["bower_components/jquery/dist/jquery.min.js"]
+      "js"     : ["bower_components/jquery/dist/jquery.js", "js/content_script.js"]
     }
   ],
   "page_action": {
@@ -31,5 +31,6 @@
     "48" : "pivotaltracker.png",
     "128": "pivotaltracker.png"
   },
+  "web_accessible_resources": ["bower_components/jquery/dist/jquery.js", "js/content_script.js"],
   "manifest_version": 2
 }

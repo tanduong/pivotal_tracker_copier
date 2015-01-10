@@ -14,22 +14,6 @@ var prModule = angular.module('myModule', ['ui.bootstrap', 'ui.ace'], ['$compile
   });
 }]);
 
-prModule.directive('elastic', [
-  '$timeout',
-  function($timeout) {
-    return {
-      restrict: 'A',
-      link: function($scope, element) {
-        var resize = function() {
-          return element[0].style.height = "" + element[0].scrollHeight + "px";
-        };
-        element.on("blur keyup change", resize);
-        $timeout(resize, 0);
-      }
-    };
-  }
-]);
-
 function selectText(containerid) {
   if (document.selection) {
     var range = document.body.createTextRange();
@@ -57,9 +41,50 @@ function todayString() {
   return formatDate(new Date());
 }
 
+function parseDate(dateString) {
+  try {
+    return dateString && !isNaN(Date.parse(dateString)) ? new Date(Date.parse(dateString)) :  null;
+  } catch(exp) {
+    return null;
+  }
+}
 
 
 prModule.controller('prController', function($scope, $compile, $timeout) {
+  $scope.today = function() {
+      $scope.dt = new Date();
+    };
+    $scope.today();
+
+    $scope.clear = function () {
+      $scope.dt = null;
+    };
+
+    // Disable weekend selection
+    $scope.disabled = function(date, mode) {
+      return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
+    };
+
+    $scope.toggleMin = function() {
+      $scope.minDate = $scope.minDate ? null : new Date();
+    };
+    $scope.toggleMin();
+
+    $scope.open = function($event) {
+      $event.preventDefault();
+      $event.stopPropagation();
+
+      $scope.opened = true;
+    };
+
+    $scope.dateOptions = {
+      formatYear: 'yy',
+      startingDay: 1
+    };
+
+    $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+    $scope.format = $scope.formats[0];
+
   this.template = localStorage["pr#template"] || template;
   this.editorOptions = {
       mode: 'ejs',
@@ -73,7 +98,7 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
 
   this.todos = [];
 
-  this.teamName   = localStorage["pr#teamName"];
+  this.teamName   = localStorage["pr#teamName"] || "The East Agile Team";
   this.domainName = localStorage["pr#domainName"];
   this.recipients = localStorage["pr#recipients"];
   this.projectName= localStorage["pr#projectName"];
@@ -84,11 +109,8 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
   this.currentEmailDomain = localStorage["pr#currentEmailDomain"] || "eastagile.com";
 
 
-  try {
-    this.lastUpdateBillCount = new Date(Date.parse(window.localStorage["lastUpdateBillCount"]));
-  } catch(exp) {
-    this.lastUpdateBillCount = null;
-  }
+  this.lastUpdateBillCount = localStorage["pr#lastUpdateBillCount"] || "None";
+
 
   this.oldWeekBills  = +window.localStorage["weekBills"]  || 0;
   this.oldMonthBills = +window.localStorage["monthBills"] || 0;
@@ -108,7 +130,6 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
   this.todayBills = 0;
 
   $scope.$watch('prCtrl.todayBills', function(todayBills){
-    debugger;
     this.weekBills  = this.computeWeekBills(todayBills);
     this.monthBills = this.computeMonthBills(todayBills);
   }.bind(this));
@@ -145,10 +166,10 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
   };
 
   this.saveBillables = function() {
-      this.lastUpdateBillCount = new Date();
-      localStorage["pr#lastUpdateBillCount"] = this.lastUpdateBillCount.toUTCString();
-      window.localStorage["monthBills"] = this.oldMonthBills = this.monthBills;
-      window.localStorage["weekBills"]  = this.oldWeekBills  = this.weekBills;
+    this.lastUpdateBillCount = todayString();
+    localStorage["pr#lastUpdateBillCount"] = todayString();
+    window.localStorage["monthBills"] = this.oldMonthBills = this.monthBills;
+    window.localStorage["weekBills"]  = this.oldWeekBills  = this.weekBills;
   };
 
   this.saveProject = function() {
@@ -220,14 +241,21 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
 
   chrome.extension.onMessage.addListener(function(request, sender) {
     if (request.msg != "pt_stories") { return; }
-    $scope.prCtrl.works = request.works;
-    $scope.prCtrl.todos = request.todos;
+    $scope.prCtrl.works       = request.works;
+    $scope.prCtrl.todos       = request.todos;
+    $scope.prCtrl.projectName = $scope.prCtrl.projectName || humanize(request.projectName);
+    $scope.prCtrl.subject     = '[' + this.projectName + ']' + " Daily Report " + todayString();
     $scope.prCtrl.safeApply();
   });
 
   chrome.tabs.executeScript(null, {file: "js/content_script.js"});
 });
 
+function humanize(string) {
+  return string.replace(/(\w+)/g, function(match) {
+    return match.charAt(0).toUpperCase() + match.slice(1);
+  });
+}
 
 function makeGmailDomainUrl(domainName) {
   var baseGmailUrl = "https://mail.google.com/";
