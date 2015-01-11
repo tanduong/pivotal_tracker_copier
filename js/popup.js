@@ -364,9 +364,11 @@ var TEMPLATE = hereDoc(function() {/*!
     <ul>
       <li ng-repeat='member in prCtrl.members'>
         {{member.name | inflector:humanize}}
-        <a href="mailto:{{member.email}}?Subject={{encodeURIComponent('Re:' + prCtrl.subject)}}" target="_top">
-          ({{member.email}})
-        </a>
+        (
+          <a href="mailto:{{member.email}}?Subject={{encodeURIComponent('Re:' + prCtrl.subject)}}" target="_top">
+            {{member.email}}
+          </a>
+        )
         ({{member.bill}} billable day)
       </li>
     </ul>
