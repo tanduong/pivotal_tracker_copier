@@ -35,8 +35,8 @@ function processActivity(activity) {
   });
 
   activityInfo.storyID    = activity.find('.story').data('id');
-  activityInfo.storyName  = activity.find('header.type-feature h1').text();
-  activityInfo.projectID  = activity.find('header.type-feature a').data('project-id');
+  activityInfo.storyName  = activity.find('header.group h1').text();
+  activityInfo.projectID  = activity.find('header.group a').data('project-id');
   activityInfo.occuredAt  = new Date($(activity).find('.time_ago').data('millis'));
   activityInfo.progress   = getProgress(actions);
   return activityInfo;

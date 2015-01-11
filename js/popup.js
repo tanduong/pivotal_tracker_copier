@@ -133,7 +133,15 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
     document.getSelection().removeAllRanges();
   }
 
-  this.copy = copy;
+  this.saveStories = function(){
+    localStorage["pr#todos"]    = JSON.stringify(this.todos);
+    localStorage["pr#works"]    = JSON.stringify(this.works);
+  };
+
+  this.mergeStories = function(){
+    this.todos = _.uniq(_.union(this.todos, JSON.parse(localStorage["pr#todos"])), 'url');
+    this.works = _.uniq(_.union(this.works, JSON.parse(localStorage["pr#works"])), 'url');
+  };
 
   this.currentTab = localStorage['pr#currentTab'] == undefined ? 'commit' : localStorage['pr#currentTab'];
 
@@ -295,7 +303,7 @@ var TEMPLATE = hereDoc(function() {/*!
   <header> What has the team done since the last call/email regarding this project? </header>
   <section>
     <ul>
-      <li ng-repeat='work in prCtrl.works'>
+      <li ng-repeat='work in prCtrl.works track by work.url'>
         {{work.status}} -
         <a href="{{work.url}}" target="_blank">{{work.name}}</a>
       </li>
@@ -307,7 +315,7 @@ var TEMPLATE = hereDoc(function() {/*!
   <header> What will the team do between now and next call/email regarding this project? </header>
   <section>
     <ul>
-      <li ng-repeat='todo in prCtrl.todos'>
+      <li ng-repeat='todo in prCtrl.todos track by todo.url'>
         <a href="{{todo.url}}" target="_blank">{{todo.name}}</a>
       </li>
     </ul>

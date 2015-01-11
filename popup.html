@@ -29,7 +29,7 @@
             Please select some stories to generate message.
           </p>
           <ul>
-            <li class='commit-message' ng-repeat='todo in prCtrl.todos'>
+            <li class='commit-message' ng-repeat='todo in prCtrl.todos track by todo.url'>
               <div>[f] - {{todo.name}}</div>
               <div>[<a href="{{todo.url}}" target="_blank">{{todo.url}}</a>]</div>
               <br>
@@ -53,7 +53,8 @@
         <hr>
         <section class="clearfix">
           <button class="btn btn-success pull-right" ng-click="prCtrl.copyCompose('email-container')">Copy &amp; Compose</button>
-          <button class="btn btn-warning pull-right" ng-click="prCtrl.copy('email-container')">Copy</button>
+          <button class="btn btn-warning pull-right" ng-click="prCtrl.saveStories()">Save stories</button>
+          <button class="btn btn-warning pull-right" ng-click="prCtrl.mergeStories()">Merge stories</button>
         </section>
       </tab>
 
