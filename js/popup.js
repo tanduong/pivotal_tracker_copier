@@ -1,4 +1,4 @@
-var prModule = angular.module('myModule', ['ui.bootstrap', 'ui.ace'], ['$compileProvider', function($compileProvider) {
+var prModule = angular.module('myModule', ['ui.bootstrap', 'ui.ace', 'ui.utils'], ['$compileProvider', function($compileProvider) {
   $compileProvider.directive('compile', function($compile) {
     return function(scope, element, attrs) {
       scope.$watch(
@@ -73,24 +73,27 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
 
   this.todos = [];
 
-  this.teamName   = localStorage["pr#teamName"] || "The East Agile Team";
-  this.domainName = localStorage["pr#domainName"];
-  this.placeholder = localStorage["pr#placeholder"];
-  this.recipients = localStorage["pr#recipients"];
-  this.projectName= localStorage["pr#projectName"];
-  this.emailTo    = localStorage["pr#emailTo"];
-  this.emailCC    = localStorage["pr#emailCC"]  || "quang.huynh@eastagile.com, admin@eastagile.com";
-  this.emailBCC   = localStorage["pr#emailBCC"] || "developers@eastagile.com";
-  this.subject    = '[' + this.projectName + ']' + " Daily Report " + todayString();
-  this.currentEmailDomain = localStorage["pr#currentEmailDomain"] || "eastagile.com";
-
-
+  this.teamName            = localStorage["pr#teamName"] || "The East Agile Team";
+  this.domainName          = localStorage["pr#domainName"];
+  this.placeholder         = localStorage["pr#placeholder"];
+  this.recipients          = localStorage["pr#recipients"];
+  this.projectName         = localStorage["pr#projectName"];
+  this.emailTo             = localStorage["pr#emailTo"];
+  this.emailCC             = localStorage["pr#emailCC"]  || "quang.huynh@eastagile.com, admin@eastagile.com";
+  this.emailBCC            = localStorage["pr#emailBCC"] || "developers@eastagile.com";
+  this.subject             = '[' + this.projectName + ']' + " Daily Report " + todayString();
+  this.currentEmailDomain  = localStorage["pr#currentEmailDomain"] || "eastagile.com";
   this.lastUpdateBillCount = localStorage["pr#lastUpdateBillCount"] || "None";
 
+  try {
+    this.billRecord = JSON.parse(localStorage["pr#billRecord"]);
+  } catch(err) {
+    this.billRecord = [];
+  };
 
   this.oldWeekBills  = +window.localStorage["weekBills"]  || 0;
   this.oldMonthBills = +window.localStorage["monthBills"] || 0;
-  this.tabActivity = Array.apply(null, Array(7)).map(Boolean);
+  this.tabActivity   = Array.apply(null, Array(7)).map(Boolean);
   this.tabActivity[+localStorage['pr#currentTab']] = true;
 
   this.computeBills = function(members) {
@@ -120,8 +123,7 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
 
   try {
     this.members = JSON.parse(localStorage["pr#members"]);
-  }
-  catch(err) {
+  } catch(err) {
     this.members = [];
   };
 
@@ -154,14 +156,21 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
   this.saveTeam = function() {
     localStorage["pr#teamName"]   = this.teamName;
     localStorage["pr#members"]    = JSON.stringify(this.members);
-    // localStorage["pr#domainName"] = this.domainName;
   };
 
   this.saveBillables = function() {
-    this.lastUpdateBillCount = todayString();
-    localStorage["pr#lastUpdateBillCount"] = todayString();
-    window.localStorage["monthBills"] = this.oldMonthBills = this.monthBills;
-    window.localStorage["weekBills"]  = this.oldWeekBills  = this.weekBills;
+    var today = todayString();
+    _.remove(this.billRecord, function(record) { return record.recordedAt == today; });
+    this.lastUpdateBillCount = today;
+    this.billRecord.unshift({
+      recordedAt: today,
+      monthBills: this.monthBills,
+      weekBills : this.weekBills
+    });
+    localStorage["pr#lastUpdateBillCount"]          = today;
+    localStorage["pr#billRecord"]                   = JSON.stringify(this.billRecord);
+    localStorage["monthBills"] = this.oldMonthBills = this.monthBills;
+    localStorage["weekBills"]  = this.oldWeekBills  = this.weekBills;
   };
 
   this.saveProject = function() {
@@ -182,7 +191,7 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
   };
 
   this.noStories = function(){
-    return !this.todos || (typeof this.todos != "Array") || this.todos.length == 0;
+    return !(this.todos && this.todos instanceof Array && this.todos.length > 0);
   };
 
   this.commitEmail = function(){
@@ -239,7 +248,6 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
     if (request.msg != "pt_stories") { return; }
     $scope.prCtrl.works       = request.works;
     $scope.prCtrl.todos       = request.todos;
-    $scope.prCtrl.subject     = '[' + this.projectName + ']' + " Daily Report " + todayString();
     $scope.prCtrl.safeApply();
   });
 
@@ -280,7 +288,7 @@ function hereDoc(f) {
 }
 
 var TEMPLATE = hereDoc(function() {/*!
-<header>Hi {{prCtrl.recipients || "everyone"}},</header>
+<header>Hi {{prCtrl.recipients &&  (prCtrl.recipients | inflector:humanize) || "everyone"}},</header>
 <br/>
 
 <article>
@@ -310,7 +318,7 @@ var TEMPLATE = hereDoc(function() {/*!
   <header> What impedes the team from performing their work as effectively as possible? </header>
   <section>
     <ul>
-      <li> Anythings? </li>
+      <li>None</li>
     </ul>
   </section>
 </article>
@@ -347,7 +355,7 @@ var TEMPLATE = hereDoc(function() {/*!
   <section>
     <ul>
       <li ng-repeat='member in prCtrl.members'>
-        {{member.name}}
+        {{member.name | inflector:humanize}}
         <a href="mailto:{{member.email}}?Subject={{encodeURIComponent('Re:' + prCtrl.subject)}}" target="_top">
           ({{member.email}})
         </a>

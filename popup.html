@@ -8,6 +8,7 @@
     <script src="bower_components/jquery/dist/jquery.js"></script>
     <script src="bower_components/lodash/dist/lodash.js"></script>
     <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-ui-utils/ui-utils.js"></script>
     <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
     <script src="bower_components/ace-builds/src-noconflict/ace.js"></script>
     <script src="bower_components/ace-builds/src-noconflict/ext-language_tools.js"></script>
@@ -24,7 +25,7 @@
         </tab-heading>
         <h4>Generated message</h4>
         <section id='commit-messages'>
-          <p class="no-stories" ng-show='prCtrl.noStories()'>
+          <p class="no-stories" ng-if="prCtrl.noStories()">
             Please select some stories to generate message.
           </p>
           <ul>
@@ -109,39 +110,50 @@
         <tab-heading>
           Bills
         </tab-heading>
-        <h4>Setting Bill Count</h4>
-        <div class="form-group">
-          <label class="control-label" for="disabledInput">Old Week Bill Count</label>
-          <input class="form-control" id="disabledInput" type="text" placeholder="{{prCtrl.oldWeekBills}}" disabled="">
-        </div>
+        <h4>Bill Count</h4>
 
-        <div class="form-group">
-          <label class="control-label" for="disabledInput">Old Month Bill Count</label>
-          <input class="form-control" id="disabledInput" type="text" placeholder="{{prCtrl.oldMonthBills}}" disabled="">
-        </div>
+        <section class="bill-infos">
+          <form class="form">
+            <div class="form-group">
+              <label class="control-label" for="week-bills">Today Week bills Computed</label>
+              <input type="text" class="form-control" id="week-bills" ng-model="prCtrl.weekBills">
+            </div>
 
-        <div class="form-group">
-          <label class="control-label">Recorded at</label>
-          <p class="input-group">
-            <input type="text" class="form-control" ng-model="prCtrl.lastUpdateBillCount" disabled=""/>
-            <span class="input-group-btn">
-              <button type="button" class="btn btn-default" disabled=""><i class="glyphicon glyphicon-calendar"></i></button>
-            </span>
-          </p>
-        </div>
+            <div class="form-group">
+              <label class="control-label" for="month-bills">Today Month bills Computed</label>
+              <input type="text" class="form-control" id="month-bills" ng-model="prCtrl.monthBills">
+            </div>
+          </form>
 
-        <form class="form">
           <div class="form-group">
-            <label class="control-label" for="week-bills">Today Week bills Computed</label>
-            <input type="text" class="form-control" id="week-bills" ng-model="prCtrl.weekBills">
+            <label class="control-label" for="disabledInput">Latest Week Bill Count</label>
+            <input class="form-control" id="disabledInput" type="text" placeholder="{{prCtrl.oldWeekBills}}" disabled="">
           </div>
 
           <div class="form-group">
-            <label class="control-label" for="month-bills">Today Month bills Computed</label>
-            <input type="text" class="form-control" id="month-bills" ng-model="prCtrl.monthBills">
+            <label class="control-label" for="disabledInput">Latest Month Bill Count</label>
+            <input class="form-control" id="disabledInput" type="text" placeholder="{{prCtrl.oldMonthBills}}" disabled="">
           </div>
-        </form>
 
+          <div class="form-group">
+            <label class="control-label">Recorded at</label>
+            <p class="input-group">
+              <input type="text" class="form-control" ng-model="prCtrl.lastUpdateBillCount" disabled=""/>
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-default" disabled=""><i class="glyphicon glyphicon-calendar"></i></button>
+              </span>
+            </p>
+          </div>
+
+          <h4>Records</h4>
+          <ul>
+            <li ng-repeat='record in prCtrl.billRecord'>
+              <span>
+                {{record.recordedAt}} - Week Bills: {{record.weekBills}} - Month Bils: {{record.monthBills}}
+              </span>
+            </li>
+          </ul>
+        </section>
         <hr />
         <section class="clearfix">
           <button class="btn btn-primary pull-right" ng-click="prCtrl.saveBillables()">Save</button>

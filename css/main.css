@@ -6,6 +6,12 @@ body {
   padding: 1px;
 }
 
+.bill-infos {
+  max-height: 398px;
+  min-height: 300px;
+  overflow-y: scroll;
+}
+
 article header {
   font-weight: bold;
 }
@@ -63,6 +69,10 @@ ul.nav.nav-tabs > li:first-child {
 #email-container {
   overflow-y: scroll;
   max-height: 398px;
+}
+
+#email-container a{
+  text-decoration: underline;
 }
 
 .btn.pull-right + .btn.pull-right {
