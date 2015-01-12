@@ -178,7 +178,7 @@
               <li ng-repeat='member in prCtrl.members'> <span>
                 {{member.name}} ({{member.email}}) ({{member.bill}} billable day)
               </span>
-              <button class="btn btn-danger btn-sm" ng-click="prCtrl.deleteMember(member)">remove</button>
+              <a href="#" ng-click="prCtrl.deleteMember(member)">remove</a>
               </li>
             </ul>
 

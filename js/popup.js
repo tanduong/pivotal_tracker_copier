@@ -73,17 +73,17 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
 
   this.todos = [];
 
-  this.teamName            = localStorage["pr#teamName"] || "The East Agile Team";
-  this.domainName          = localStorage["pr#domainName"];
-  this.placeholder         = localStorage["pr#placeholder"];
-  this.recipients          = localStorage["pr#recipients"];
-  this.projectName         = localStorage["pr#projectName"];
-  this.emailTo             = localStorage["pr#emailTo"];
-  this.emailCC             = localStorage["pr#emailCC"]  || "quang.huynh@eastagile.com, admin@eastagile.com";
-  this.emailBCC            = localStorage["pr#emailBCC"] || "developers@eastagile.com";
+  this.teamName            = settedValue(localStorage["pr#teamName"])     ? localStorage["pr#teamName"]     : "";
+  this.domainName          = settedValue(localStorage["pr#domainName"])   ? localStorage["pr#domainName"]   : "";
+  this.placeholder         = settedValue(localStorage["pr#placeholder"])  ? localStorage["pr#placeholder"]  : "";
+  this.recipients          = settedValue(localStorage["pr#recipients"])   ? localStorage["pr#recipients"]   : "";
+  this.projectName         = settedValue(localStorage["pr#projectName"])  ? localStorage["pr#projectName"]  : "";
+  this.emailTo             = settedValue(localStorage["pr#emailTo"])      ? localStorage["pr#emailTo"]      : "";
+  this.emailCC             = settedValue(localStorage["pr#emailCC"])      ? localStorage["pr#emailCC"]      : "";
+  this.emailBCC            = settedValue(localStorage["pr#emailBCC"])     ? localStorage["pr#emailBCC"]     : "";
+  this.currentEmailDomain  = settedValue(localStorage["pr#currentEmailDomain"])   ? localStorage["pr#currentEmailDomain"] : "";
+  this.lastUpdateBillCount = settedValue(localStorage["pr#lastUpdateBillCount"])  ? localStorage["pr#lastUpdateBillCount"] : "" || "None";
   this.subject             = '[' + this.projectName + ']' + " Daily Report " + todayString();
-  this.currentEmailDomain  = localStorage["pr#currentEmailDomain"] || "eastagile.com";
-  this.lastUpdateBillCount = localStorage["pr#lastUpdateBillCount"] || "None";
 
   try {
     this.billRecord = JSON.parse(localStorage["pr#billRecord"]);
@@ -101,11 +101,19 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
   };
 
   this.computeWeekBills = function(todayBills) {
-    return (new Date()).getDay() == 1  ? todayBills : this.oldWeekBills  + todayBills;
+    if(this.expiredBillCount()) {
+      return (new Date()).getDay() == 1  ? todayBills : this.oldWeekBills  + todayBills;
+    } else {
+      return this.oldWeekBills;
+    }
   }.bind(this);
 
   this.computeMonthBills = function(todayBills) {
-    return (new Date()).getDate() == 1 ? todayBills : this.oldMonthBills + todayBills;
+    if(this.expiredBillCount()) {
+      return (new Date()).getDate() == 1 ? todayBills : this.oldMonthBills + todayBills;
+    } else {
+      return this.oldMonthBills;
+    }
   }.bind(this);
 
   this.todayBills = 0;
@@ -132,6 +140,8 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
     document.execCommand('copy');
     document.getSelection().removeAllRanges();
   }
+
+  this.copy = copy;
 
   this.saveStories = function(){
     localStorage["pr#todos"]    = JSON.stringify(this.todos);
@@ -193,9 +203,12 @@ prModule.controller('prController', function($scope, $compile, $timeout) {
   };
 
   this.expiredBillCount = function() {
+    if ((new Date()) - new Date(Date.parse(this.lastUpdateBillCount)) < 24 * 60 * 60 * 1000) {
+      return false;
+    }
     if(this.oldMonthBills + this.todayBills != this.monthBills) return true;
     if(this.oldWeekBills + this.todayBills != this.weekBills)   return true;
-    return this.lastUpdateBillCount &&(new Date()) - this.lastUpdateBillCount > 12 * 60 * 60 * 1000;
+    return false;
   };
 
   this.noStories = function(){
@@ -278,14 +291,34 @@ function makeGmailDomainUrl(domainName) {
   return gmailUrl + gmailUrlSuffix;
 }
 
+function settedValue(value){
+  return value != undefined && value != 'undefined' && value != '';
+}
+
 function makeGmailWin(options) {
   var subject = options.subject;
-  var gmailURL = makeGmailDomainUrl(options.domainName) +
-                 "&su="   + encodeURIComponent(options.subject) +
-                 "&body=" + encodeURIComponent(options.body) +
-                 "&to="   + encodeURIComponent(options.to) +
-                 "&cc="   + encodeURIComponent(options.cc) +
-                 "&bcc="  + encodeURIComponent(options.bcc);
+  var gmailURL = makeGmailDomainUrl(options.domainName);
+
+  if(settedValue(options.subject)){
+    gmailURL = gmailURL + "&su="   + encodeURIComponent(options.subject);
+  }
+
+  if(settedValue(options.body)){
+    gmailURL = "&body=" + encodeURIComponent(options.body);
+  }
+
+  if(settedValue(options.to)){
+    gmailURL = gmailURL + "&to="   + encodeURIComponent(options.to);
+  }
+
+  if(settedValue(options.cc)){
+    gmailURL = gmailURL + "&cc="   + encodeURIComponent(options.cc);
+  }
+
+  if(settedValue(options.bcc)){
+    gmailURL = gmailURL + "&bcc="  + encodeURIComponent(options.bcc);
+  }
+
   chrome.tabs.create({url: gmailURL });
 }
 
