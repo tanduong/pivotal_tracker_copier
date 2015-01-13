@@ -6,6 +6,11 @@ body {
   padding: 1px;
 }
 
+ul {
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+
 .bill-infos {
   max-height: 398px;
   min-height: 300px;
