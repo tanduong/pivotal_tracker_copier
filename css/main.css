@@ -87,3 +87,7 @@ ul.nav.nav-tabs > li:first-child {
 p.no-stories {
   margin-bottom: 92px;
 }
+
+a {
+  color: #15c;
+}
